@@ -1,0 +1,72 @@
+heat_template_version: 2016-10-14
+
+description: >
+  A template which creates a port with disabled port security
+
+parameters:
+  name:
+    description: >
+      The name of the port
+    type: string
+
+  index:
+    description: >
+      port index
+    type: number
+
+  network:
+    description: >
+      The name or ID of the internal network
+    type: string
+
+  subnet:
+    description: >
+      The name or ID of the internal IPv4 space
+    type: string
+
+  fixed_ip:
+    description: >
+      Fixed IP to be used
+    type: string
+
+conditions:
+  fixed_ip_defined:
+    not:
+      equals:
+        - get_param: fixed_ip
+        - ""
+
+resources:
+  port:
+    type: OS::Neutron::Port
+    properties:
+      name: {get_param: name}
+      network: {get_param: network}
+      fixed_ips:
+        if:
+        - fixed_ip_defined
+        - [ ip_address: {get_param: fixed_ip} ]
+        - [ subnet: {get_param: subnet} ]
+      replacement_policy: AUTO
+      port_security_enabled: false
+
+outputs:
+  OS::stack_id:
+    value: {get_resource: port}
+
+  ip:
+    description: private ip
+    value: {get_attr: [port, fixed_ips, 0, ip_address]}
+
+  etc_host_line:
+    description: etc hosts line
+    value:
+      str_replace:
+        params:
+          $hostname$:
+            str_split:
+              - 'port-'
+              - { get_param: name }
+              - 1
+          $ip$: {get_attr: [port, fixed_ips, 0, ip_address]}
+        template: $ip$  $hostname$

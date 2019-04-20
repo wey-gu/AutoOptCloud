@@ -1,0 +1,152 @@
+#
+# For adding background load per each computes
+#
+heat_template_version: 2016-10-14
+
+description: >
+  cloud pipeline VNF VM
+
+parameters:
+  scheme:
+    description: >
+      vm metadata
+    type: json
+
+  node_name:
+    description: >
+      vm name
+    type: string
+
+  benchmark_retry:
+    description: >
+      benchmark_retry
+    type: number
+
+  index:
+    description: >
+      vm index
+    type: number
+
+  etc_hosts_string:
+    description: >
+      etc hosts string
+    type: string
+
+  ssh_user:
+    description: >
+      OS user name
+    type: string
+
+  server_group:
+    description: >
+      ID of a server group
+    type: string
+
+  port:
+    description: >
+      port id or name
+    type: string
+
+  image:
+    description: >
+      Select a base image
+    type: string
+    constraints:
+    - custom_constraint: glance.image
+
+  nova_availability_zone:
+    type: string
+    description: >
+      Availability zone
+    default: nova
+    immutable: true
+
+  load_gen_server_group_policies:
+    type: comma_delimited_list
+    description: >
+      List of policies applied on load nodes ServerGroup.
+    default: ['anti-affinity']
+    immutable: true
+
+  public_key:
+    description: >
+      The SSH public key to access the VM hosts
+    type: string
+
+resources:
+
+# port to be added
+  vm:
+    type: OS::Nova::Server
+    properties:
+      availability_zone: { get_param: nova_availability_zone }
+      name: { get_param: node_name }
+      flavor: { get_param: [scheme, { get_param: node_name }, flavor] }
+      image: {get_param: image}
+      networks:
+      - port: {get_param: port}
+      config_drive: true
+      user_data_format: SOFTWARE_CONFIG
+      user_data_update_policy: IGNORE
+      user_data: {get_resource: setup_config_and_load}
+      scheduler_hints:
+        group: {get_param: server_group}
+
+  user_config:
+    type: OS::Heat::CloudConfig
+    properties:
+      cloud_config:
+        users:
+        - name: { get_param: ssh_user }
+          gecos: User
+          primary_group: { get_param: ssh_user }
+          lock_passwd: true
+          groups: [wheel, adm, systemd-journal]
+          sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+          shell: /bin/bash
+          ssh_authorized_keys:
+          - {get_param: public_key}
+
+  include_files:
+    type: OS::Heat::CloudConfig
+    properties:
+      cloud_config:
+        write_files:
+        - path: /var/lib/cloud_pipeline_functions.sh
+          permissions: 0755
+          content: {get_file: ../scripts/functions.sh}
+        - path: /tmp/etc_hosts
+          permissions: 0644
+          content: {get_param: etc_hosts_string}
+
+  benchmark_config:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: script
+      config:
+        str_replace:
+          params:
+            $benchmark_type$: { get_param: [scheme, { get_param: index }, benchmark_type] }
+            $iperf_server_host$:
+              if:
+                - { get_param: [scheme, { get_param: index }, iperf_benchmark_enabled] }
+                - { get_param: [scheme, { get_param: index }, iperf_server_host] }
+                - ""
+            $benchmark_retry$: {get_param: benchmark_retry}
+          template: {get_file: ../scripts/benchmark.sh}
+
+  benchmark_run:
+    depends_on: [vm]
+    type: OS::Heat::SoftwareDeployment
+    properties:
+      config: {get_resource: benchmark_config}
+      server: {get_resource: vm}
+      actions:
+      - CREATE
+
+  setup_config:
+    type: OS::Heat::MultipartMime
+    properties:
+      parts:
+      - config: {get_resource: user_config}
+      - config: {get_resource: include_files}

@@ -1,0 +1,152 @@
+#
+# For adding background load per each computes
+#
+heat_template_version: 2016-10-14
+
+description: >
+  cloud pipeline load generation cluster
+
+parameters:
+
+  scheme:
+    description: >
+      vm metadata
+    type: json
+
+  host_count:
+    description: >
+      vm metadata
+    type: number
+
+  ssh_user:
+    description: >
+      user name
+    type: string
+    default: ubuntu
+    immutable: true
+
+  nodename_prefix:
+    description: >
+      nodename prefix to be used
+    type: string
+
+  subnet_cidr:
+    description: >
+      subnet_cidr to be used
+    default: 10.0.0.0/24
+    type: string
+
+#  default is never being parsed...
+#  subnet_prefix:
+#    description: >
+#      subnet_prefix to be used
+#    default: {str_split: ['0/', { get_param: subnet_cidr }, 0]}
+#    type: string
+
+  image:
+    description: >
+      Select a base image
+    type: string
+    constraints:
+    - custom_constraint: glance.image
+
+  nova_availability_zone:
+    type: string
+    description: >
+      Availability zone
+    default: nova
+    immutable: true
+
+  load_gen_server_group_policies:
+    type: comma_delimited_list
+    description: >
+      List of policies applied on load nodes ServerGroup.
+    default: ['anti-affinity']
+    immutable: true
+
+  public_key:
+    description: >
+      The SSH public key to access the VM hosts
+    type: string
+
+
+resources:
+
+  server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name: load-gen-server-group
+      policies: { get_param: load_gen_server_group_policies }
+
+  network:
+    type: OS::Neutron::Net
+    properties:
+      name: load-gen-network
+
+  subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: network }
+      cidr: { get_param: subnet_cidr }
+      # dns_nameservers: { get_param: dns_server_ips }
+      enable_dhcp: true
+      name: load-gen-subnet
+
+  # also included /etc/hosts line per port in output
+  ports:
+    type: OS::Heat::ResourceGroup
+    depends_on: [ subnet ]
+    properties:
+      count: { get_param: host_count }
+      resource_def:
+        type: hotFiles/port.yaml
+        properties:
+          index: "%index%"
+          name:
+            str_replace:
+                params:
+                  $NODENAME$: { get_param: nodename_prefix }
+                template: port-$NODENAME$-%index%
+          network: { get_attr: [network, name] }
+          subnet: { get_attr: [subnet, name] }
+          fixed_ip:
+            str_replace:
+              params:
+                # subnet_prefix
+                $pre_fix$: {str_split: ['0/', { get_param: subnet_cidr }, 0]}
+              template: $pre_fix$1%index%
+
+  etc_hosts: 
+    type: OS::Heat::Value
+    depends_on: [ ports ]
+    properties:
+      type: string
+      value: {list_join: ["\n", { get_attr: [ports, etc_host_line]}]}
+
+  load_generator_vms:
+    type: OS::Heat::ResourceGroup
+    depends_on: [ ports, etc_hosts ]
+    properties:
+      count: { get_param: host_count }
+      resource_def:
+        type: hotFiles/load_generator_vm.yaml
+        properties:
+          nova_availability_zone: { get_param: nova_availability_zone }
+          index: "%index%"
+          node_name:
+            str_replace:
+              params:
+                $NODENAME$: { get_param: nodename_prefix }
+              template: $NODENAME$-%index%
+          ssh_user: { get_param: ssh_user }
+          public_key: { get_param: public_key }
+          image: { get_param: image }
+          port:
+            str_replace:
+              params:
+                $NODENAME$: { get_param: nodename_prefix }
+              template: port-$NODENAME$-%index%
+          server_group: { get_resource: server_group }
+          scheme: { get_param: scheme }
+          etc_hosts_string: {get_attr: [etc_hosts, value]}
+

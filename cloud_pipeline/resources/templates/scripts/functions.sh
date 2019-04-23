@@ -156,6 +156,7 @@ EOF
 
 benchmark_mysql()
 {
+    local return_value=0
     # preparation
     mysql -e "CREATE DATABASE sbtest;" || true
     mysql -e "CREATE USER sbtest@localhost;" || true
@@ -168,8 +169,8 @@ benchmark_mysql()
         --table_size=100000 \
         --threads=10 \
         --time=120 \
-        prepare
-    
+        prepare || true
+
     run_sysbench_mysql >> /var/lib/cloud_pipeline/results/mysql.log || return_value=$?
 
     if [[ ${return_value} != 0 ]]; then
@@ -194,6 +195,7 @@ EOF
 
 benchmark_cpu()
 {
+    local return_value=0
     /usr/bin/sysbench cpu --cpu-max-prime=${CPU_MAX_PRIME} run >> /var/lib/cloud_pipeline/results/cpu.log || return_value=$?
     if [[ ${return_value} != 0 ]]; then
         update_state failed
@@ -208,6 +210,7 @@ benchmark_cpu()
 
 benchmark_iperf()
 {
+    local return_value=0
     local iperf_server_host="${1}"
     /usr/bin/iperf3 -c ${iperf_server_host} -t 60 -P 16 >> /var/lib/cloud_pipeline/results/iperf3_c.log || return_value=$?
     if [[ ${return_value} != 0 ]]; then
@@ -223,6 +226,7 @@ benchmark_iperf()
 
 benchmark_fileio()
 {
+    local return_value=0
     /usr/bin/sysbench fileio --file-total-size=32G prepare
     /usr/bin/sysbench fileio --file-total-size=32G \
         --file-test-mode=rndrw --time=60 \

@@ -46,13 +46,13 @@ main()
 
     # benchmark
 
-    while [[ $(check_state success || grep -w CHECK_STATE_OK) && ${counter} != 0 ]]; do
+    while [[ $(check_state succeeded | grep -w CHECK_STATE_NOK) && ${counter} != 0 ]]; do
         benchmark_run $benchmark_type
         counter=$((${counter}-1))
         sleep 1;
     done
 
-    if [[ $(check_state success) != CHECK_STATE_OK ]]; then
+    if [[ $(check_state succeeded | grep -w CHECK_STATE_NOK) ]]; then
         exit 1
     fi
 

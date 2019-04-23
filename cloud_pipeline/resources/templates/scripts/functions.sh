@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
-TIMER_S=86400
+# LOAD env variables
+LOAD_IPERF_TIMER_S=86400
+# Benchmark variables
+FILEIO_SIZE=32G
 CPU_MAX_PRIME=2000
+RABBIT_SCALE=100
+MYSQL_TIME=60
+IPERF_TIME=60
+
 append_etc_hosts()
 {
     cat /tmp/etc_hosts >> /etc/hosts
@@ -28,11 +35,11 @@ EOF
 load_fileio()
 {
     local fileio_thread="${1}"
-    /usr/bin/sysbench fileio --file-total-size=32G prepare
+    /usr/bin/sysbench fileio --file-total-size=${FILEIO_SIZE} prepare
     cat <<EOF > /tmp/disk_load.sh
 while true ; do
-    /usr/bin/sysbench fileio --file-total-size=32G \
-      --file-test-mode=rndrw --time=${TIMER_S} \
+    /usr/bin/sysbench fileio --file-total-size=${FILEIO_SIZE} \
+      --file-test-mode=rndrw --time=${LOAD_IPERF_TIMER_S} \
       --max-requests=0 --threads=${fileio_thread} \
       run
 done 
@@ -55,7 +62,7 @@ EOF
 
     cat <<EOF > /tmp/iperf_client.sh
 while true ; do
-    /usr/bin/iperf3 -c ${iperf_server_host} -t ${TIMER_S} -P ${iperf_parallel}
+    /usr/bin/iperf3 -c ${iperf_server_host} -t ${LOAD_IPERF_TIMER_S} -P ${iperf_parallel}
 done 
 EOF
 
@@ -97,8 +104,8 @@ run_benchmark_rabbitmq()
 {
     ulimit -n 65536; \
         perf-test_linux_x86_64 --queue-pattern 'perf-test-%d' \
-        --queue-pattern-from 1 --queue-pattern-to 1000 \
-        --producers 1000 --consumers 1000 \
+        --queue-pattern-from 1 --queue-pattern-to ${RABBIT_SCALE} \
+        --producers ${RABBIT_SCALE} --consumers ${RABBIT_SCALE} \
         --heartbeat-sender-threads 10 \
         --publishing-interval 5 -z 30 
 }
@@ -137,7 +144,7 @@ run_sysbench_mysql()
     --tables=20 \
     --table_size=100000 \
     --threads=10 \
-    --time=120 \
+    --time=${MYSQL_TIME} \
     run
 }
 
@@ -212,7 +219,7 @@ benchmark_iperf()
 {
     local return_value=0
     local iperf_server_host="${1}"
-    /usr/bin/iperf3 -c ${iperf_server_host} -t 60 -P 16 >> /var/lib/cloud_pipeline/results/iperf3_c.log || return_value=$?
+    /usr/bin/iperf3 -c ${iperf_server_host} -t ${IPERF_TIME} -P 16 >> /var/lib/cloud_pipeline/results/iperf3_c.log || return_value=$?
     if [[ ${return_value} != 0 ]]; then
         update_state failed
         return
@@ -227,8 +234,8 @@ benchmark_iperf()
 benchmark_fileio()
 {
     local return_value=0
-    /usr/bin/sysbench fileio --file-total-size=32G prepare
-    /usr/bin/sysbench fileio --file-total-size=32G \
+    /usr/bin/sysbench fileio --file-total-size=${FILEIO_SIZE} prepare
+    /usr/bin/sysbench fileio --file-total-size=${FILEIO_SIZE} \
         --file-test-mode=rndrw --time=60 \
         --max-requests=0 --threads=12 \
         run  >> /var/lib/cloud_pipeline/results/fileio.log || return_value=$?

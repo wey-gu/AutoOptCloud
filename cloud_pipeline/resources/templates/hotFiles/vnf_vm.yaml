@@ -74,16 +74,16 @@ parameters:
     type: string
 
 conditions:
-  iperf_server_enabled:
+  iperf_client_enabled:
     equals:
       - { get_param: [scheme, { get_param: index }, benchmark_type] }
-      - iperf_s
+      - iperf_c
   iperf_antiaffinity:
     or:
     - equals:
       - { get_param: [scheme, { get_param: index }, benchmark_type] }
-      - iperf_c
-    - iperf_server_enabled
+      - iperf_s
+    - iperf_client_enabled
 
 resources:
 
@@ -144,7 +144,7 @@ resources:
             $benchmark_type$: { get_param: [scheme, { get_param: index }, benchmark_type] }
             $iperf_server_host$:
               if:
-                - iperf_server_enabled
+                - iperf_client_enabled
                 - { get_param: [scheme, { get_param: index }, iperf_server_host] }
                 - ""
             $benchmark_retry$: {get_param: benchmark_retry}

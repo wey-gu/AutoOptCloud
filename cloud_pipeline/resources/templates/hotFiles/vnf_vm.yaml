@@ -12,7 +12,7 @@ parameters:
       vm metadata
     type: json
 
-  node_name:
+  hostname:
     description: >
       vm name
     type: string
@@ -73,6 +73,18 @@ parameters:
       The SSH public key to access the VM hosts
     type: string
 
+conditions:
+  iperf_server_enabled:
+    equals:
+      - { get_param: [scheme, { get_param: index }, benchmark_type] }
+      - iperf_s
+  iperf_antiaffinity:
+    or:
+    - equals:
+      - { get_param: [scheme, { get_param: index }, benchmark_type] }
+      - iperf_c
+    - iperf_server_enabled
+
 resources:
 
 # port to be added
@@ -80,17 +92,20 @@ resources:
     type: OS::Nova::Server
     properties:
       availability_zone: { get_param: nova_availability_zone }
-      name: { get_param: node_name }
-      flavor: { get_param: [scheme, { get_param: node_name }, flavor] }
+      name: { get_param: [scheme, { get_param: index }, name] }
+      flavor: { get_param: [scheme, { get_param: index }, flavor] }
       image: {get_param: image}
       networks:
       - port: {get_param: port}
       config_drive: true
       user_data_format: SOFTWARE_CONFIG
       user_data_update_policy: IGNORE
-      user_data: {get_resource: setup_config_and_load}
+      user_data: {get_resource: setup_config}
       scheduler_hints:
-        group: {get_param: server_group}
+        if:
+        - iperf_antiaffinity
+        - group: {get_param: server_group}
+        - {}
 
   user_config:
     type: OS::Heat::CloudConfig
@@ -129,20 +144,20 @@ resources:
             $benchmark_type$: { get_param: [scheme, { get_param: index }, benchmark_type] }
             $iperf_server_host$:
               if:
-                - { get_param: [scheme, { get_param: index }, iperf_benchmark_enabled] }
+                - iperf_server_enabled
                 - { get_param: [scheme, { get_param: index }, iperf_server_host] }
                 - ""
             $benchmark_retry$: {get_param: benchmark_retry}
           template: {get_file: ../scripts/benchmark.sh}
 
-  benchmark_run:
-    depends_on: [vm]
-    type: OS::Heat::SoftwareDeployment
-    properties:
-      config: {get_resource: benchmark_config}
-      server: {get_resource: vm}
-      actions:
-      - CREATE
+  # benchmark_run:
+  #   depends_on: [vm]
+  #   type: OS::Heat::SoftwareDeployment
+  #   properties:
+  #     config: {get_resource: benchmark_config}
+  #     server: {get_resource: vm}
+  #     actions:
+  #     - CREATE
 
   setup_config:
     type: OS::Heat::MultipartMime
@@ -150,3 +165,4 @@ resources:
       parts:
       - config: {get_resource: user_config}
       - config: {get_resource: include_files}
+      - config: {get_resource: benchmark_config}

@@ -47,9 +47,14 @@ parameters:
     - custom_constraint: neutron.subnet
     immutable: true
 
-  vnf_address_pre_fix:
+  # vnf_address_pre_fix:
+  #   description: >
+  #     vnf fixed ip prefix
+  #   type: string
+
+  hostname_pre_fix:
     description: >
-      vnf fixed ip prefix
+      hostname prefix
     type: string
 
   image:
@@ -98,16 +103,16 @@ resources:
           index: "%index%"
           name: 
             str_replace:
-                params:
-                  $NODENAME$: { get_param: [scheme, %index%, name] }
-                template: port-$NODENAME$
+              params:
+                $NODENAME$: { get_param: hostname_pre_fix}
+              template: port-$NODENAME$-%index%
           network: { get_param: external_network }
           subnet: { get_param: external_subnet }
-          fixed_ip:
-            str_replace:
-              params:
-                $pre_fix$: { get_param: vnf_address_pre_fix }
-              template: $pre_fix$%index%
+          # fixed_ip:
+          #   str_replace:
+          #     params:
+          #       $pre_fix$: { get_param: vnf_address_pre_fix }
+          #     template: $pre_fix$%index%
 
   etc_hosts: 
     type: OS::Heat::Value
@@ -120,26 +125,30 @@ resources:
   vnf_vms:
     type: OS::Heat::ResourceGroup
     depends_on: [ ports, etc_hosts ]
+    update_policy:
+      batch_create:
+        max_batch_size: 1
+        pause_time: 120
     properties:
       count: 6
       resource_def:
         type: hotFiles/vnf_vm.yaml
         properties:
-          batch_create:
-            max_batch_size: 1
-            pause_time: 30
           nova_availability_zone: { get_param: nova_availability_zone }
           index: "%index%"
           benchmark_retry: {get_param: benchmark_retry}
-          node_name:
-            str_replace: { get_param: [scheme, %index%, name] }
+          hostname:
+            str_replace:
+              params:
+                $NODENAME$: { get_param: hostname_pre_fix}
+              template: $NODENAME$-%index%
           ssh_user: { get_param: ssh_user }
           public_key: { get_param: public_key }
           image: { get_param: image }
           port:
             str_replace:
               params:
-                $NODENAME$: { get_param: [scheme, %index%, name] }
+                $NODENAME$: { get_param: hostname_pre_fix}
               template: port-$NODENAME$-%index%
           server_group: { get_resource: server_group }
           scheme: { get_param: scheme }

@@ -1,48 +1,44 @@
 ---
 #
-# nova flavor-delete 121264
-# nova flavor-create U12-RAM12-DISK-64 121264 12288 64 12
-# nova flavor-key 121264 set hw:mem_page_size=1048576
-# nova flavor-delete 061264
-# nova flavor-create U06-RAM12-DISK-64 061264 12288 64 12
-# nova flavor-key 061264 set hw:mem_page_size=1048576
+# nova flavor-delete 040436
+# nova flavor-create U04-RAM04-DISK-36 040436 4096 36 04
+# nova flavor-key 040436 set hw:mem_page_size=1048576
 # nova flavor-list --ext
 #
 
 parameters:
   host_count: 6
   image: bionic-server-cloudimg-amd64-cloud-pipeline
-  external_network: tenant_51
-  external_subnet: tenant_51
-  vnf_address_pre_fix: 10.175.150.15
-  nodename_prefix: load-gen
-  iperf_server_host: switch-server-4
+  external_network: 29fbd1ef-2ec7-40d9-95e5-5ccdd1f12a8c
+  external_subnet: 9cee4f0c-b642-432b-9d62-ed5a0d654ec9
+  #vnf_address_pre_fix: 10.175.150.15
+  hostname_pre_fix: benchmark_vnf
   benchmark_retry: 3
   scheme:
     - name: erlang-rabbit-0
       benchmark_type: rabbitmq
-      flavor: U06-RAM12-DISK-64
+      flavor: U04-RAM04-DISK-36
       messagequeue_benchmark_enabled: True
     - name: db-mysql-1
       benchmark_type: mysql
-      flavor: U06-RAM12-DISK-64
+      flavor: U04-RAM04-DISK-36
       db_benchmark_enabled: True
     - name: io-disk-2
       benchmark_type: fileio
-      flavor: U06-RAM12-DISK-64
+      flavor: U04-RAM04-DISK-36
       fileio_benchmark_enabled: True
     - name: cpu-computing-3
       benchmark_type: cpu
-      flavor: U12-RAM12-DISK-64
+      flavor: U04-RAM04-DISK-36
       cpu_benchmark_enabled: True
     - name: switch-server-4
       benchmark_type: iperf_s
-      flavor: U06-RAM12-DISK-64
+      flavor: U04-RAM04-DISK-36
       iperf_server_enabled: True
     - name: switch-client-5
       benchmark_type: iperf_c
-      flavor: U06-RAM12-DISK-64
-      iperf_server_host: switch-server-4
+      flavor: U04-RAM04-DISK-36
+      iperf_server_host: benchmark_vnf-4
       iperf_benchmark_enabled: True
 
   # example only, replace your own pub keys here

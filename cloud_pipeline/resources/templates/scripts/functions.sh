@@ -4,6 +4,7 @@ CPU_MAX_PRIME=2000
 append_etc_hosts()
 {
     cat /tmp/etc_hosts >> /etc/hosts
+    echo >> /etc/hosts
 }
 
 create_state_file()
@@ -69,7 +70,7 @@ EOF
 
 update_state()
 {
-    cat "${1}" >> /var/lib/cloud_pipeline/state
+    echo "${1}" >> /var/lib/cloud_pipeline/state
 }
 
 check_state()
@@ -80,11 +81,11 @@ check_state()
     # fi
     local return_value=0
     tail -n1 /var/lib/cloud_pipeline/state | grep -w "${1}" || return_value=$?
-    if [[ ${return_value} != 0 ]]
-        echo CHECK_STATE_OK
+    if [[ ${return_value} != 0 ]]; then
+        echo CHECK_STATE_NOK
         return
     fi
-    echo CHECK_STATE_NOK
+    echo CHECK_STATE_OK
 }
 
 start_benchmark()
@@ -118,7 +119,7 @@ benchmark_rabbitmq()
 {   
     local return_value=0
     run_benchmark_rabbitmq >> /var/lib/cloud_pipeline/results/rabbitmq.log || return_value=$?
-    if [[ ${return_value} != 0 ]]
+    if [[ ${return_value} != 0 ]]; then
         update_state failed
         return
     fi
@@ -171,7 +172,7 @@ benchmark_mysql()
     
     run_sysbench_mysql >> /var/lib/cloud_pipeline/results/mysql.log || return_value=$?
 
-    if [[ ${return_value} != 0 ]]
+    if [[ ${return_value} != 0 ]]; then
         update_state failed
         return
     fi
@@ -194,7 +195,7 @@ EOF
 benchmark_cpu()
 {
     /usr/bin/sysbench cpu --cpu-max-prime=${CPU_MAX_PRIME} run >> /var/lib/cloud_pipeline/results/cpu.log || return_value=$?
-    if [[ ${return_value} != 0 ]]
+    if [[ ${return_value} != 0 ]]; then
         update_state failed
         return
     fi
@@ -209,7 +210,7 @@ benchmark_iperf()
 {
     local iperf_server_host="${1}"
     /usr/bin/iperf3 -c ${iperf_server_host} -t 60 -P 16 >> /var/lib/cloud_pipeline/results/iperf3_c.log || return_value=$?
-    if [[ ${return_value} != 0 ]]
+    if [[ ${return_value} != 0 ]]; then
         update_state failed
         return
     fi
@@ -227,7 +228,7 @@ benchmark_fileio()
         --file-test-mode=rndrw --time=60 \
         --max-requests=0 --threads=12 \
         run  >> /var/lib/cloud_pipeline/results/fileio.log || return_value=$?
-    if [[ ${return_value} != 0 ]]
+    if [[ ${return_value} != 0 ]]; then
         update_state failed
         return
     fi

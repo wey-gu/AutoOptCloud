@@ -12,18 +12,18 @@ benchmark_run()
 
     case $benchmark_type in
         rabbitmq)
-            benchmark_rabbitmq
+            benchmark_rabbitmq ;;
         mysql)
-            benchmark_mysql
+            benchmark_mysql ;;
         fileio)
-            benchmark_fileio
+            benchmark_fileio ;;
         cpu)
-            benchmark_cpu
+            benchmark_cpu ;;
         iperf_s)
             load_iperf server dummy_arg dummy_arg
-            update_state succeeded
+            update_state succeeded ;;
         iperf_c)
-            benchmark_iperf $iperf_server_host
+            benchmark_iperf $iperf_server_host ;;
     esac
 }
 
@@ -46,7 +46,7 @@ main()
 
     # benchmark
 
-    while [[ $(check_state success) != CHECK_STATE_OK && ! ${counter} == 0 ]]; do
+    while [[ $(check_state success || grep -w CHECK_STATE_OK) && ${counter} != 0 ]]; do
         benchmark_run $benchmark_type
         counter=$((${counter}-1))
         sleep 1;

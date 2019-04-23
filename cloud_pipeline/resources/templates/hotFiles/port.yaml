@@ -27,6 +27,7 @@ parameters:
   fixed_ip:
     description: >
       Fixed IP to be used
+    default: ""
     type: string
 
 conditions:

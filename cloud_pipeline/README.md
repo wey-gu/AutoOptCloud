@@ -10,3 +10,8 @@ openstack stack create --template load_generation.yaml --environment  envFiles/l
 ```bash
 openstack stack create --template vnf.yaml --environment  envFiles/vnf_env.yaml  --wait test-vnf-benchmark 
 ```
+
+## reference
+
+https://docs.openstack.org/heat/latest/template_guide/hot_spec.html
+https://docs.openstack.org/heat/latest/template_guide/openstack.html

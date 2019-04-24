@@ -23,3 +23,16 @@ OS_credential["OS_USERNAME"] = OS_USERNAME
 OS_credential["OS_PASSWORD"] = OS_PASSWORD
 OS_credential["OS_AUTH_URL"] = OS_AUTH_URL
 OS_credential["OS_CACERT"] = OS_CACERT
+
+APPLY_CONF_TEMPLATE_PATH = 'resources/scripts/apply_config.pp'
+
+ARG_KEYS = [
+    "w_disk",
+    "w_io_ops",
+    "w_user_percent",
+    "w_user_p",
+    "w_iowait_p",
+    "w_frequency",
+    "w_idle_p",
+    "w_p",
+    "w_kernel_p"]

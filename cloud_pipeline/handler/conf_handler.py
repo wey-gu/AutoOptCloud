@@ -34,7 +34,6 @@ class ConfHandler:
 
     ARG_KEYS = [
         "w_disk",
-        "w_io_ops",
         "w_user_percent",
         "w_user_p",
         "w_iowait_p",

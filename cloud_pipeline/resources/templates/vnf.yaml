@@ -114,13 +114,19 @@ resources:
           #       $pre_fix$: { get_param: vnf_address_pre_fix }
           #     template: $pre_fix$%index%
 
-  etc_hosts: 
+  etc_hosts:
     type: OS::Heat::Value
     depends_on: [ ports ]
     properties:
       type: string
       value: {list_join: ["\n", { get_attr: [ports, etc_host_line]}]}
 
+  ansible_hosts:
+    type: OS::Heat::Value
+    depends_on: [ ports ]
+    properties:
+      type: string
+      value: {list_join: ["\n", { get_attr: [ports, ansible_host_line]}]}
 
   vnf_vms:
     type: OS::Heat::ResourceGroup

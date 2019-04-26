@@ -71,3 +71,16 @@ outputs:
               - 1
           $ip$: {get_attr: [port, fixed_ips, 0, ip_address]}
         template: $ip$  $hostname$
+
+  ansible_host_line:
+    description: etc hosts line
+    value:
+      str_replace:
+        params:
+          $hostname$:
+            str_split:
+              - 'port-'
+              - { get_param: name }
+              - 1
+          $ip$: {get_attr: [port, fixed_ips, 0, ip_address]}
+        template: $hostname$ ansible_ssh_host=$ip$

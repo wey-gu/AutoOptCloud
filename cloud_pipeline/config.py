@@ -15,7 +15,16 @@ NEUTRON_ENDPOINT_TYPE = 'internalURL'
 OS_ENDPOINT_TYPE = 'internalURL'
 OS_CACERT = '/path/to/certs/OS-ca.crt'
 
+# VNF for benchmark
+VNF_STACK_NAME = "vnf_benchmark_stack"
+VNF_HOT_PATH = "resources/templates/vnf.yaml"
+VNF_ENV_PATH = "resources/templates/envFiles/vnf_env.yaml"
+VNF_CREATE_RETRY = 3
+VNF_DELETE_RETRY = 3
+# LOAD GENERATION ENV
 LOAD_STACKNAME = "load_generation_stack"
+LOADGEN_HOT_PATH = "resources/templates/load_gen.yaml"
+LOADGEN_ENV_PATH = "resources/templates/envFiles/load_gen_env.yaml"
 
 OS_credential = dict()
 OS_credential["OS_TENANT_NAME"] = OS_TENANT_NAME

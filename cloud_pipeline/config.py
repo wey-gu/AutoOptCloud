@@ -22,9 +22,11 @@ VNF_ENV_PATH = "resources/templates/envFiles/vnf_env.yaml"
 VNF_CREATE_RETRY = 3
 VNF_DELETE_RETRY = 3
 # LOAD GENERATION ENV
-LOAD_STACKNAME = "load_generation_stack"
+LOADGEN_STACKNAME = "load_generation_stack"
 LOADGEN_HOT_PATH = "resources/templates/load_gen.yaml"
 LOADGEN_ENV_PATH = "resources/templates/envFiles/load_gen_env.yaml"
+LOADGEN_CREATE_RETRY = 3
+LOADGEN_DELETE_RETRY = 3
 
 OS_credential = dict()
 OS_credential["OS_TENANT_NAME"] = OS_TENANT_NAME

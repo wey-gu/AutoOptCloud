@@ -4,13 +4,13 @@ from ..config import LOADGEN_HOT_PATH, LOADGEN_ENV_PATH, LOADGEN_STACK_NAME
 from ..config import LOADGEN_CREATE_RETRY, LOADGEN_DELETE_RETRY
 
 
-class LoadGenerationEnv:
+class LoadGenerator:
     def __init__(self):
         self.heat = Heatclient()
         self.stack_name = LOADGEN_STACK_NAME
 
     @retry(LOADGEN_CREATE_RETRY, delay=60, backoff=3)
-    def create_vnf(self):
+    def setup(self):
         heat = Heatclient()
         if self.heat.stack_existed(LOADGEN_STACK_NAME, self.heat):
             delete_id = heat.stack_filter(heat, LOADGEN_STACK_NAME)[0].id

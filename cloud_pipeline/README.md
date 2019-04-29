@@ -1,4 +1,24 @@
 
+## API
+
+### cloud_pipeline
+
+```python
+
+from cloud_pipeline import CloudPipeline
+from cloud_pipeline.config import ARG_KEYS
+import numpy as np
+
+randomeArgList = np.random.uniform(low=-1.0, high=1.0, size=(len(ARG_KEYS),))
+arg = dict(zip(ARG_KEYS, randomeArgList))
+
+cp = CloudPipeline()
+cp.load_gen()
+benchmark = benchmark_run(arg)
+
+```
+
+
 ## manually create load-gen resources
 
 ```bash

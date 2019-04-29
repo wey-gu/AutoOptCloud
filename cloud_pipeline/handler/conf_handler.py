@@ -1,5 +1,6 @@
 from string import Template
 from ..config import APPLY_CONF_TEMPLATE_PATH, ARG_KEYS
+import numpy as np
 import os
 import subprocess
 
@@ -45,9 +46,17 @@ class ConfHandler:
     """
     def __init__(self, arg):
         self.apply_command = self._build_command(arg)
+        self.arg_validator(arg)
 
     def apply(self):
         return self._issue_command(self.apply_command)
+
+    def arg_validator(self, arg):
+        for key in ARG_KEYS:
+            assert (key in arg), "Invalid arg: missing %s in arguments" % (key)
+            assert (
+                type(arg[key]) is (float or np.float32 or np.float64)
+                ), "Invalid tye: %s should be float" % (key)
 
     def _build_command(arg):
         templatePath = os.path.join(

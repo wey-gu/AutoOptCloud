@@ -1,7 +1,8 @@
 from heatclient.client import Client
 from heatclient.common import template_utils
 from .ks_client import Keystoneclient
-from ..config import OS_credential, OS_CACERT
+from ..config import OS_CACERT
+from .config_parser import config
 from polling import poll
 import yaml
 import os
@@ -13,6 +14,8 @@ STACK_DELETED = "DELETE_COMPLETE"
 
 class Heatclient:
     def __init__(self):
+        conf = config()
+        OS_credential = conf.OS_credential
         k_client = Keystoneclient(**OS_credential)
         self.endpoint = k_client.get_endpoint("orchestration").publicurl
         self.client = Client(

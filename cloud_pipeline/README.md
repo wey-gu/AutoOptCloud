@@ -9,15 +9,26 @@ from cloud_pipeline import CloudPipeline
 from cloud_pipeline.config import ARG_KEYS
 import numpy as np
 
+
+# instantiate cloud_pipeline
+cp = CloudPipeline()
+
+# genarate load
+cp.load_gen()
+
+# generate a random argument list
 randomeArgList = np.random.uniform(low=-1.0, high=1.0, size=(len(ARG_KEYS),))
+
+# build argument dict
 arg = dict(zip(ARG_KEYS, randomeArgList))
 
-cp = CloudPipeline()
-cp.load_gen()
+# query a benchmark
+
 benchmark = benchmark_run(arg)
 
 ```
 
+> test notes to be transferred to unit tests
 
 ## manually create load-gen resources
 

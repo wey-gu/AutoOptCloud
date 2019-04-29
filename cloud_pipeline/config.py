@@ -1,8 +1,8 @@
-OS_TENANT_NAME = 'admin'
-OS_USERNAME = 'admin'
-OS_PASSWORD = 'admin'
-OS_AUTH_URL = 'http://192.168.2.34:5000/v2.0'
-OS_CACERT = '/path/to/certs/OS-ca.crt'
+OS_TENANT_NAME = "admin"
+OS_USERNAME = "admin"
+OS_PASSWORD = "admin"
+OS_AUTH_URL = "http://192.168.2.34:5000/v2.0"
+OS_CACERT = "/path/to/certs/OS-ca.crt"
 
 # VNF for benchmark
 VNF_STACK_NAME = "vnf_benchmark_stack"
@@ -17,7 +17,7 @@ LOADGEN_ENV_PATH = "resources/templates/envFiles/load_gen_env.yaml"
 LOADGEN_CREATE_RETRY = 3
 LOADGEN_DELETE_RETRY = 3
 
-APPLY_CONF_TEMPLATE_PATH = 'resources/scripts/apply_config.pp'
+APPLY_CONF_TEMPLATE_PATH = "resources/scripts/apply_config.pp"
 
 ARG_KEYS = [
     "w_disk",
@@ -29,3 +29,7 @@ ARG_KEYS = [
     "w_idle_p",
     "w_p",
     "w_kernel_p"]
+
+# data collection and VM benchmark path
+WORKING_DIR = "/var/lib/cloud_pipeline/"
+PLAYBOOK_FETCHDATA = "resources/ansible/playbooks/fetch-data.yaml"

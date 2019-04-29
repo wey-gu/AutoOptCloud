@@ -41,23 +41,23 @@ resources:
   port:
     type: OS::Neutron::Port
     properties:
-      name: {get_param: name}
-      network: {get_param: network}
+      name: { get_param: name }
+      network: { get_param: network }
       fixed_ips:
         if:
-        - fixed_ip_defined
-        - [ ip_address: {get_param: fixed_ip} ]
-        - [ subnet: {get_param: subnet} ]
+          - fixed_ip_defined
+          - [ip_address: { get_param: fixed_ip }]
+          - [subnet: { get_param: subnet }]
       replacement_policy: AUTO
       port_security_enabled: false
 
 outputs:
   OS::stack_id:
-    value: {get_resource: port}
+    value: { get_resource: port }
 
   ip:
     description: private ip
-    value: {get_attr: [port, fixed_ips, 0, ip_address]}
+    value: { get_attr: [port, fixed_ips, 0, ip_address] }
 
   etc_host_line:
     description: etc hosts line
@@ -66,21 +66,21 @@ outputs:
         params:
           $hostname$:
             str_split:
-              - 'port-'
+              - "port-"
               - { get_param: name }
               - 1
-          $ip$: {get_attr: [port, fixed_ips, 0, ip_address]}
+          $ip$: { get_attr: [port, fixed_ips, 0, ip_address] }
         template: $ip$  $hostname$
 
   ansible_host_line:
-    description: etc hosts line
+    description: ansible inventory line
     value:
       str_replace:
         params:
           $hostname$:
             str_split:
-              - 'port-'
+              - "port-"
               - { get_param: name }
               - 1
-          $ip$: {get_attr: [port, fixed_ips, 0, ip_address]}
-        template: $hostname$ ansible_ssh_host=$ip$
+          $ip$: { get_attr: [port, fixed_ips, 0, ip_address] }
+        template: $hostname$ ansible_host=$ip$ ansible_user=ubuntu

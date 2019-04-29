@@ -1,4 +1,3 @@
-
 ## API
 
 ### cloud_pipeline
@@ -24,7 +23,7 @@ arg = dict(zip(ARG_KEYS, randomeArgList))
 
 # query a benchmark
 
-benchmark = benchmark_run(arg)
+benchmark = cp.benchmark_run(arg)
 
 ```
 
@@ -39,13 +38,15 @@ openstack stack create --template load_gen.yaml --environment  envFiles/load_gen
 ## manually query a benchmark
 
 ```bash
-openstack stack create --template vnf.yaml --environment  envFiles/vnf_env.yaml  --wait test-vnf-benchmark 
+openstack stack create --template vnf.yaml --environment  envFiles/vnf_env.yaml  --wait test-vnf-benchmark
 ```
 
 ## manually test
 
 ### create a benchmark VNF
+
 > Test utils
+
 ```python
 
 from cloud_pipeline.utils.h_client import Heatclient
@@ -60,6 +61,7 @@ stack = heat.stack_create(
     )
 
 ```
+
 > Test handler
 
 ```python
@@ -74,7 +76,6 @@ vnf.create_vnf()
 https://docs.openstack.org/heat/latest/template_guide/hot_spec.html
 https://docs.openstack.org/heat/latest/template_guide/openstack.html
 https://developer.openstack.org/api-ref/orchestration/v1/index.html?expanded=create-stack-detail#stacks
-
 
 ## pre-requirement
 

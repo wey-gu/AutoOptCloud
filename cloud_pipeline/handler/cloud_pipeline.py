@@ -17,6 +17,6 @@ class CloudPipelineBase:
         conf_handler.apply()
         self.vnf.create_vnf()
 
-        data_collector = DataCollector()
+        data_collector = DataCollector(arguments)
         data_collector.collect()
         return data_collector.data

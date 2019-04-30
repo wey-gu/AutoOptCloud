@@ -1,4 +1,5 @@
 import csv
+import operator
 import os
 import subprocess
 from ansible.inventory.manager import InventoryManager
@@ -18,6 +19,11 @@ DB_CSV_NEW_COLUMN = [
     "id"]
 DB_CSV_HEADER = ARG_KEYS + DB_CSV_NEW_COLUMN
 REMOTE_DATA_PATH = WORKING_DIR + "results/"
+RABBIT_MQ_LOG = "rabbitmq.log"
+FILEIO_LOG = "fileio.log"
+MYSQL_LOG = "mysql.log"
+IPERF_LOG = "iperf_c.log"
+CPU_LOG = "cpu.log"
 
 
 class ResultCallback(CallbackBase):
@@ -93,6 +99,55 @@ class DataCollector:
 
     def parse_data(self):
         pass
+
+    def benchmark_rabbitmq(self):
+        data_path = self.data_path + RABBIT_MQ_LOG
+        recieveRateAvgRow = subprocess.check_output(
+            " ".join(
+                ["grep", "'receiving rate avg'", data_path,
+                 "|", "tail", "-1"]),
+            shell=True
+        )
+        self.rabbit_id, self.rabbit_rate = operator.itemgetter(
+            1, -2)(recieveRateAvgRow.split())
+        consumerLatencylines = subprocess.check_output(
+            " ".join(
+                ["grep", self.rabbit_id, data_path, "|",
+                 "grep", "'consumer latency'"]),
+            shell=True
+        ).split("\n")
+        consumerLatency = [int(line.split(
+            "/")[-2]) for line in consumerLatencylines]
+        consumerLatency_mean_ms = sum(
+            consumerLatency) * 0.001 / len(consumerLatency)
+        self.rabbit_bm = float(self.rabbit_rate) * consumerLatency_mean_ms
+        return self.rabbit_bm
+
+    def benchmark_fileio(self):
+        data_path = self.data_path + FILEIO_LOG
+        fileiolines = subprocess.check_output(
+            " ".join(
+                ["grep", "Throughput", data_path, "-A", "12",
+                 "|", "tail", "-n", "12"]),
+            shell=True).split("\n")
+        self.fileio_read = float(fileiolines[0].split()[-1])
+        self.fileio_write = float(fileiolines[1].split()[-1])
+        self.fileio_latency = float(fileiolines[-2].split()[-1])
+        self.fileio_bm = (
+            self.fileio_read * self.fileio_write / self.fileio_latency)
+        return self.fileio_bm
+
+    def benchmark_mysql(self):
+        data_path = self.data_path + MYSQL_LOG
+        mysqllines = subprocess.check_output(
+            " ".join(["grep", "transactions", data_path, "-A", "13",
+                      "|", "tail", "-n", "13"]),
+            shell=True).split("\n")
+        self.mysql_trans = float(mysqllines[0].split()[2].split("(")[1])
+        self.mysql_latency = float(mysqllines[-2].split()[-1])
+        self.mysql_bm = (
+            self.mysql_trans / self.mysql_latency)
+        return self.mysql_bm
 
     def create_csv_db(self):
         with open(DB_CSV_PATH, "a") as db:

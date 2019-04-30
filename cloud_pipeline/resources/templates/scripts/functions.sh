@@ -3,8 +3,8 @@
 LOAD_IPERF_TIMER_S=86400
 # Benchmark variables
 FILEIO_SIZE=32G
-CPU_MAX_PRIME=2000
-RABBIT_SCALE=100
+CPU_MAX_PRIME=20000
+RABBIT_SCALE=10000
 MYSQL_TIME=60
 IPERF_TIME=60
 
@@ -105,9 +105,10 @@ run_benchmark_rabbitmq()
     ulimit -n 65536; \
         perf-test_linux_x86_64 --queue-pattern 'perf-test-%d' \
         --queue-pattern-from 1 --queue-pattern-to ${RABBIT_SCALE} \
-        --producers ${RABBIT_SCALE} --consumers ${RABBIT_SCALE} \
+        --producers 128 --consumers 128 \
         --heartbeat-sender-threads 10 \
-        --publishing-interval 5 -z 30 
+        --publishing-interval 5 \
+        --time 60 
 }
 
 load_benchmark_rabbitmq()

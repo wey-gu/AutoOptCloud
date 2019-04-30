@@ -74,7 +74,9 @@ vnf.create_vnf()
 ## reference
 
 https://docs.openstack.org/heat/latest/template_guide/hot_spec.html
+
 https://docs.openstack.org/heat/latest/template_guide/openstack.html
+
 https://developer.openstack.org/api-ref/orchestration/v1/index.html?expanded=create-stack-detail#stacks
 
 ## pre-requirement

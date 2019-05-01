@@ -47,7 +47,7 @@ parameters:
       Select a base image
     type: string
     constraints:
-    - custom_constraint: glance.image
+      - custom_constraint: glance.image
 
   nova_availability_zone:
     type: string
@@ -60,7 +60,7 @@ parameters:
     type: comma_delimited_list
     description: >
       List of policies applied on load nodes ServerGroup.
-    default: ['anti-affinity']
+    default: ["anti-affinity"]
     immutable: true
 
   public_key:
@@ -69,50 +69,49 @@ parameters:
     type: string
 
 resources:
-
-# port to be added
+  # port to be added
   vm:
     type: OS::Nova::Server
     properties:
       availability_zone: { get_param: nova_availability_zone }
       name: { get_param: node_name }
       flavor: { get_param: [scheme, { get_param: node_name }, flavor] }
-      image: {get_param: image}
+      image: { get_param: image }
       networks:
-      - port: {get_param: port}
+        - port: { get_param: port }
       config_drive: true
       user_data_format: SOFTWARE_CONFIG
       user_data_update_policy: IGNORE
-      user_data: {get_resource: setup_config_and_load}
+      user_data: { get_resource: setup_config_and_load }
       scheduler_hints:
-        group: {get_param: server_group}
+        group: { get_param: server_group }
 
   user_config:
     type: OS::Heat::CloudConfig
     properties:
       cloud_config:
         users:
-        - name: { get_param: ssh_user }
-          gecos: User
-          primary_group: { get_param: ssh_user }
-          lock_passwd: true
-          groups: [wheel, adm, systemd-journal]
-          sudo: ["ALL=(ALL) NOPASSWD:ALL"]
-          shell: /bin/bash
-          ssh_authorized_keys:
-          - {get_param: public_key}
+          - name: { get_param: ssh_user }
+            gecos: User
+            primary_group: { get_param: ssh_user }
+            lock_passwd: true
+            groups: [wheel, adm, systemd-journal]
+            sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+            shell: /bin/bash
+            ssh_authorized_keys:
+              - { get_param: public_key }
 
   include_files:
     type: OS::Heat::CloudConfig
     properties:
       cloud_config:
         write_files:
-        - path: /var/lib/cloud_pipeline_functions.sh
-          permissions: 0755
-          content: {get_file: ../scripts/functions.sh}
-        - path: /tmp/etc_hosts
-          permissions: 0644
-          content: {get_param: etc_hosts_string}
+          - path: /var/lib/cloud_pipeline_functions.sh
+            permissions: 0755
+            content: { get_file: ../scripts/functions.sh }
+          - path: /tmp/etc_hosts
+            permissions: 0644
+            content: { get_param: etc_hosts_string }
 
   init_config:
     type: OS::Heat::SoftwareConfig
@@ -121,36 +120,59 @@ resources:
       config:
         str_replace:
           params:
-            $cpu_load_enabled$: { get_param: [scheme, { get_param: node_name }, cpu_load_enabled] }
+            $cpu_load_enabled$:
+              {
+                get_param: [scheme, { get_param: node_name }, cpu_load_enabled],
+              }
             $cpu_percentage$:
               if:
-                - { get_param: [scheme, { get_param: node_name }, cpu_load_enabled] }
-                - { get_param: [scheme, { get_param: node_name }, cpu_percentage] }
+                - {
+                    get_param:
+                      [scheme, { get_param: node_name }, cpu_load_enabled],
+                  }
+                - {
+                    get_param:
+                      [scheme, { get_param: node_name }, cpu_percentage],
+                  }
                 - ""
-            $fileio_enabled$: { get_param: [scheme, { get_param: node_name }, fileio_enabled] }
+            $fileio_enabled$:
+              { get_param: [scheme, { get_param: node_name }, fileio_enabled] }
             $fileio_thread$:
               if:
-                - { get_param: [scheme, { get_param: node_name }, fileio_enabled] }
-                - { get_param: [scheme, { get_param: node_name }, fileio_thread] }
+                - {
+                    get_param:
+                      [scheme, { get_param: node_name }, fileio_enabled],
+                  }
+                - {
+                    get_param:
+                      [scheme, { get_param: node_name }, fileio_thread],
+                  }
                 - ""
-            $iperf_server_host$ : { get_param: [scheme, iperf_server_host] }
-            $iperf_enabled$: { get_param: [scheme, { get_param: node_name }, iperf_enabled] }
+            $iperf_server_host$: { get_param: [scheme, iperf_server_host] }
+            $iperf_enabled$:
+              { get_param: [scheme, { get_param: node_name }, iperf_enabled] }
             $iperf_role$:
               if:
-                - { get_param: [scheme, { get_param: node_name }, iperf_enabled] }
+                - {
+                    get_param:
+                      [scheme, { get_param: node_name }, iperf_enabled],
+                  }
                 - { get_param: [scheme, { get_param: node_name }, iperf_role] }
                 - ""
             $iperf_parallel$:
               if:
-                - { get_param: [scheme, { get_param: node_name }, iperf_enabled] }
+                - {
+                    get_param:
+                      [scheme, { get_param: node_name }, iperf_enabled],
+                  }
                 - { get_param: [scheme, iperf_parallel] }
                 - ""
-          template: {get_file: ../scripts/fire_load.sh}
+          template: { get_file: ../scripts/fire_load.sh }
 
   setup_config_and_load:
     type: OS::Heat::MultipartMime
     properties:
       parts:
-      - config: {get_resource: user_config}
-      - config: {get_resource: include_files}
-      - config: {get_resource: init_config}
+        - config: { get_resource: user_config }
+        - config: { get_resource: include_files }
+        - config: { get_resource: init_config }

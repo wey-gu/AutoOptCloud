@@ -83,4 +83,4 @@ outputs:
               - { get_param: name }
               - 1
           $ip$: { get_attr: [port, fixed_ips, 0, ip_address] }
-        template: $hostname$ ansible_host=$ip$ ansible_user=ubuntu
+        template: $hostname$ ansible_host=$ip$ ansible_user=ubuntu ansible_python_interpreter=/usr/bin/python3 ansible_ssh_extra_args='-o StrictHostKeyChecking=no'

@@ -9,9 +9,8 @@
 parameters:
   host_count: 6
   image: bionic-server-cloudimg-amd64-cloud-pipeline
-  external_network: 29fbd1ef-2ec7-40d9-95e5-5ccdd1f12a8c
-  external_subnet: 9cee4f0c-b642-432b-9d62-ed5a0d654ec9
-  #vnf_address_pre_fix: 10.175.150.15
+  external_network: 82d72b6b-5a85-42c5-9086-71e9f773d1ff
+  external_subnet: bfbef939-36d4-4e4f-b22a-5ad1aafb5d1f
   hostname_pre_fix: benchmark_vnf
   benchmark_retry: 3
   scheme:
@@ -43,4 +42,4 @@ parameters:
 
   # example only, replace your own pub keys here
   public_key: >
-    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDVcumAYuj/ytDHZBFaqD0NRoQG+NAnwsrtYuM8D/gL71JtpO9C+xgKxX9/osGPO7m+CVYLSoA7qL1uHLLuRvM/MFXQMJFQJpqqbt+IeaSn5W9qC1kCXXsUQY5fwAMU1uI6w15X3q0DDP2zklEqCM4sJ3GdFb5FucW4ckWG8t008QZOpG8NMHN+e6NxCqdCjNo53Sz/YcDQWM04ZpujJQMFIZtSu8YFuSQ1UFEskhf5fE/Ip1keuZRJ1llx5vnpNGZrOsXb7/noByfEjl1PkJwuy4GXnLv4oWsYQh/JXiYg2ixacqDvn2iXSiCCxRhbFONIPYvxLOMoK7xatokSFTjJ
+    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3CLc1qPFfsAvmSo66gk8DPmTjRjUn5ykbB5/HZhN1NipnJqpbAvRf4hntaNJVEDHJc222AiF0wqoqc3EXaGgvqL/uttM8Owy5LEv+MGOLnNt8hIsxeVgzOBxJPlrePxR8L17FK+KKZzaITm7lJI9pChY4UaZZUA7B2MkZgB6UO7e0UessP8huaXs8650Cjfmy2JxXQLay9V6I4jw59pNo39ypSINScQW51tSixngg1NSkKqnILuDRz4cjU/uX7pnAsmKG+HlmW11E6mscHIilD1tuUGgVQyc1eljiezl1jdYqcRPVErjBaDrhnjbvuOJ8G3s/aXZ2MJuAlio6Jq6N

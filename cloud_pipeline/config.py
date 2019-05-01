@@ -1,7 +1,7 @@
 OS_TENANT_NAME = "admin"
 OS_USERNAME = "admin"
 OS_PASSWORD = "admin"
-OS_AUTH_URL = "http://192.168.2.34:5000/v2.0"
+OS_AUTH_URL = "http://192.168.2.28:5000/v2.0"
 OS_CACERT = "/path/to/certs/OS-ca.crt"
 
 # VNF for benchmark
@@ -20,14 +20,13 @@ LOADGEN_DELETE_RETRY = 3
 APPLY_CONF_TEMPLATE_PATH = "resources/scripts/apply_config.pp"
 
 ARG_KEYS = [
+    "w_ram",
     "w_disk",
-    "w_io_ops",
-    "w_user_percent",
     "w_user_p",
     "w_iowait_p",
     "w_frequency",
     "w_idle_p",
-    "w_p",
+    "w_cpu_p",
     "w_kernel_p"]
 
 # data collection and VM benchmark path

@@ -25,7 +25,7 @@ load_cpu()
     local cpu_percentage="${1}"
     cat <<EOF > /tmp/cpu_load.sh
 while true ; do
-    /usr/bin/stress-ng -c 0 -t 2y -p ${cpu_percentage}
+    /usr/bin/stress-ng --cpu 0 --timeout 2y --cpu-load ${cpu_percentage}
 done 
 EOF
     /usr/bin/screen -dmS cpu_load /bin/bash /tmp/cpu_load.sh

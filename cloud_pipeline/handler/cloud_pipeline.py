@@ -7,10 +7,10 @@ from .data_collector import DataCollector
 class CloudPipelineBase:
     def __init__(self):
         self.vnf = VnfHandler()
-        self.load_gen = LoadGenerator()
+        self.load_generater = LoadGenerator()
 
     def load_gen(self):
-        self.load_gen.setup()
+        return self.load_generater.setup()
 
     def benchmark_run(self, arguments):
         conf_handler = ConfHandler(arguments)
@@ -19,4 +19,4 @@ class CloudPipelineBase:
 
         data_collector = DataCollector(arguments)
         data_collector.collect()
-        return data_collector.get_benchmark()
+        return data_collector.benchmark

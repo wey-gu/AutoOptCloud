@@ -1,13 +1,13 @@
 from string import Template
-from ..config import APPLY_CONF_TEMPLATE_PATH, ARG_KEYS
-import numpy as np
 import os
 import subprocess
+import numpy as np
+from ..config import APPLY_CONF_TEMPLATE_PATH, ARG_KEYS
 
 
-class puppetTemplate(Template):
+class PuppetTemplate(Template):
     """
-    puppetTemplate
+    PuppetTemplate
 
     It inherits from string.Template
 
@@ -16,7 +16,7 @@ class puppetTemplate(Template):
     This Template will treat %foo as variable named foo.
 
     For example:
-        puppetTemplate(abc.txt).substitute(foo="bar") will render abc.txt
+        PuppetTemplate(abc.txt).substitute(foo="bar") will render abc.txt
         with '%foo' replaced by 'bar'
 
     :param template: template of string to be renderred
@@ -26,24 +26,16 @@ class puppetTemplate(Template):
     delimiter = '%'
 
 
-class ConfHandler:
+class ConfHandler():
     """
     ConfHandler
 
     :param arg: argument dict to be applied
     :type arg: dict
 
-    ARG_KEYS = [
-        "w_disk",
-        "w_user_percent",
-        "w_user_p",
-        "w_iowait_p",
-        "w_frequency",
-        "w_idle_p",
-        "w_p",
-        "w_kernel_p"]
     arg = dict(zip(ARG_KEYS, values))
     """
+
     def __init__(self, arg):
         self.apply_command = self._build_command(arg)
         self.arg_validator(arg)
@@ -55,28 +47,28 @@ class ConfHandler:
         for key in ARG_KEYS:
             assert (key in arg), "Invalid arg: missing %s in arguments" % (key)
             assert (
-                type(arg[key]) is (float or np.float32 or np.float64)
-                ), "Invalid tye: %s should be float" % (key)
+                type(arg[key]) in [float, np.float32, np.float64]
+            ), "Invalid tye: %s should be float" % (key)
 
-    def _build_command(arg):
-        templatePath = os.path.join(
+    def _build_command(self, arg):
+        template_path = os.path.join(
             os.path.dirname(__file__),
             '..',
             APPLY_CONF_TEMPLATE_PATH)
-        with open(templatePath, 'r') as file:
-            templateString = file.read()
-        puppetString = puppetTemplate(templateString).substitute(**arg)
-        commandString = "/usr/bin/puppet apply -e '" + puppetString + "'"
-        return commandString
+        with open(template_path, 'r') as template_file:
+            template_string = template_file.read()
+        puppet_string = PuppetTemplate(template_string).substitute(**arg)
+        command_string = "/usr/bin/puppet apply -e '" + puppet_string + "'"
+        return command_string
 
-    def _issue_command(command):
+    def _issue_command(self, command):
         output, error = subprocess.Popen(
             command,
             universal_newlines=True,
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
-            ).communicate()
+        ).communicate()
         return output, error
 
     def cleanup(self):

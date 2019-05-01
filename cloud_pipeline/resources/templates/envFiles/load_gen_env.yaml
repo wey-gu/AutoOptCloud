@@ -1,16 +1,18 @@
 ---
 #
 # nova flavor-delete 121264
-# nova flavor-create U12-RAM12-DISK-64 121264 12288 64 12
+# nova flavor-create U14-RAM12-DISK-64 121264 12288 64 14
 # nova flavor-key 121264 set hw:mem_page_size=1048576
+# nova flavor-key 121264 set hw:cpu_policy=shared
 # nova flavor-delete 061264
-# nova flavor-create U06-RAM12-DISK-64 061264 12288 64 12
+# nova flavor-create U06-RAM12-DISK-64 061264 12288 64 06
 # nova flavor-key 061264 set hw:mem_page_size=1048576
+# nova flavor-key 061264 set hw:cpu_policy=shared
 # nova flavor-list --ext
 #
 
 parameters:
-  host_count: 2
+  host_count: 4
   image: bionic-server-cloudimg-amd64-cloud-pipeline
   # network: <>
   # subnet: <>
@@ -19,35 +21,39 @@ parameters:
   # dns_server_ips:
   scheme:
     iperf_parallel: 16
-    iperf_server_host: load-gen-1
+    iperf_server_host: load-gen-3
     load-gen-0:
-      flavor: U12-RAM12-DISK-64
+      flavor: U14-RAM12-DISK-64
       cpu_load_enabled: True
-      cpu_percentage: 60
+      cpu_percentage: 20
       fileio_enabled: True
       fileio_thread: 12
-      iperf_enabled: True
-      iperf_role: client
+      iperf_enabled: False
+      iperf_role: None
     load-gen-1:
       flavor: U06-RAM12-DISK-64
       cpu_load_enabled: True
       cpu_percentage: 60
       fileio_enabled: True
       fileio_thread: 12
-      iperf_enabled: True
-      iperf_role: server
+      iperf_enabled: False
+      iperf_role: None
     load-gen-2:
-      flavor: U12-RAM12-DISK-64
+      flavor: U14-RAM12-DISK-64
       cpu_load_enabled: True
       cpu_percentage: 60
+      fileio_enabled: False
+      fileio_thread: 0
       iperf_enabled: True
       iperf_role: client
     load-gen-3:
       flavor: U06-RAM12-DISK-64
       cpu_load_enabled: True
       cpu_percentage: 20
+      fileio_enabled: False
+      fileio_thread: 0
       iperf_enabled: True
       iperf_role: server
   # example only, replace your own pub keys here
   public_key: >
-    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDVcumAYuj/ytDHZBFaqD0NRoQG+NAnwsrtYuM8D/gL71JtpO9C+xgKxX9/osGPO7m+CVYLSoA7qL1uHLLuRvM/MFXQMJFQJpqqbt+IeaSn5W9qC1kCXXsUQY5fwAMU1uI6w15X3q0DDP2zklEqCM4sJ3GdFb5FucW4ckWG8t008QZOpG8NMHN+e6NxCqdCjNo53Sz/YcDQWM04ZpujJQMFIZtSu8YFuSQ1UFEskhf5fE/Ip1keuZRJ1llx5vnpNGZrOsXb7/noByfEjl1PkJwuy4GXnLv4oWsYQh/JXiYg2ixacqDvn2iXSiCCxRhbFONIPYvxLOMoK7xatokSFTjJ
+    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3CLc1qPFfsAvmSo66gk8DPmTjRjUn5ykbB5/HZhN1NipnJqpbAvRf4hntaNJVEDHJc222AiF0wqoqc3EXaGgvqL/uttM8Owy5LEv+MGOLnNt8hIsxeVgzOBxJPlrePxR8L17FK+KKZzaITm7lJI9pChY4UaZZUA7B2MkZgB6UO7e0UessP8huaXs8650Cjfmy2JxXQLay9V6I4jw59pNo39ypSINScQW51tSixngg1NSkKqnILuDRz4cjU/uX7pnAsmKG+HlmW11E6mscHIilD1tuUGgVQyc1eljiezl1jdYqcRPVErjBaDrhnjbvuOJ8G3s/aXZ2MJuAlio6Jq6N

@@ -12,3 +12,7 @@
         src: "{{ remote_path }}{{ item }}"
         dest: "{{ data_path }}"
       with_items: "{{ files_to_fetch.stdout_lines }}"
+    - name: get fetched filename
+      shell: "cp {{ data_path }}*{{ remote_path }}* {{ data_path }}"
+      delegate_to: localhost
+      run_once: True

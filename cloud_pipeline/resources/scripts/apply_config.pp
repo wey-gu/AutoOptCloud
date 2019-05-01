@@ -8,9 +8,9 @@ $user_p = "%w_user_p"
 $iowait_p = "%w_iowait_p"
 $frequency = "%w_frequency"
 $idle_p = "%w_idle_p"
-$p = "%w_p"
+$cpu_p = "%w_cpu_p"
 $kernel_p = "%w_kernel_p"
-$weight_setting = "cpu.user.percent=${user_p}, cpu.iowait.percent=${iowait_p}, cpu.frequency=${frequency}, cpu.idle.percent=${idle_p}, cpu.percent=${p}, cpu.kernel.percent=${kernel_p}"
+$weight_setting = "cpu.user.percent=${user_p}, cpu.iowait.percent=${iowait_p}, cpu.frequency=${frequency}, cpu.idle.percent=${idle_p}, cpu.percent=${cpu_p}, cpu.kernel.percent=${kernel_p}"
 nova_config{
   "DEFAULT/io_ops_weight_multiplier":   value => $io_ops_weight_multiplier;
   "DEFAULT/ram_weight_multiplier":      value => $ram_weight_multiplier;

@@ -134,7 +134,7 @@ resources:
     update_policy:
       batch_create:
         max_batch_size: 1
-        pause_time: 120
+        pause_time: 240
     properties:
       count: 6
       resource_def:

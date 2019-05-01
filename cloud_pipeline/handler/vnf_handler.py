@@ -6,15 +6,13 @@ from ..config import VNF_CREATE_RETRY, VNF_DELETE_RETRY
 
 class VnfHandler:
     def __init__(self):
-        self.heat = Heatclient()
         self.stack_name = VNF_STACK_NAME
 
     @retry(VNF_CREATE_RETRY, delay=60, backoff=3)
     def create_vnf(self):
         heat = Heatclient()
-        if self.heat.stack_existed(VNF_STACK_NAME, self.heat):
-            delete_id = heat.stack_filter(heat, VNF_STACK_NAME)[0].id
-            self.cleanup(delete_id)
+        if heat.stack_existed(VNF_STACK_NAME, heat):
+            self.cleanup()
         stack = heat.stack_create(
             hc=heat.client,
             HOT_path=VNF_HOT_PATH,
@@ -25,11 +23,16 @@ class VnfHandler:
         return heat.polled_expected_status(heat, stack_id, STACK_CREATED)
 
     @retry(VNF_DELETE_RETRY, delay=60, backoff=3)
-    def cleanup(self, stack_id):
+    def cleanup(self):
         heat = Heatclient()
+        delete_id = heat.stack_filter(heat, VNF_STACK_NAME)[0].id
         try:
-            heat.stack_delete(heat, stack_id)
+            heat.stack_delete(heat, delete_id)
         except:  # noqa: E722
             # to be done: add logging here
             pass
-        return heat.polled_expected_status(heat, stack_id, STACK_DELETED)
+        return heat.polled_expected_status(heat, delete_id, STACK_DELETED)
+
+    def vnf_existed(self):
+        heat = Heatclient()
+        return heat.stack_existed(VNF_STACK_NAME, heat)

@@ -6,15 +6,13 @@ from ..config import LOADGEN_CREATE_RETRY, LOADGEN_DELETE_RETRY
 
 class LoadGenerator:
     def __init__(self):
-        self.heat = Heatclient()
         self.stack_name = LOADGEN_STACK_NAME
 
     @retry(LOADGEN_CREATE_RETRY, delay=60, backoff=3)
     def setup(self):
         heat = Heatclient()
-        if self.heat.stack_existed(LOADGEN_STACK_NAME, self.heat):
-            delete_id = heat.stack_filter(heat, LOADGEN_STACK_NAME)[0].id
-            self.cleanup(delete_id)
+        if heat.stack_existed(LOADGEN_STACK_NAME, heat):
+            self.cleanup()
         stack = heat.stack_create(
             hc=heat.client,
             HOT_path=LOADGEN_HOT_PATH,
@@ -25,11 +23,16 @@ class LoadGenerator:
         return heat.polled_expected_status(heat, stack_id, STACK_CREATED)
 
     @retry(LOADGEN_DELETE_RETRY, delay=60, backoff=3)
-    def cleanup(self, stack_id):
+    def cleanup(self):
         heat = Heatclient()
+        delete_id = heat.stack_filter(heat, LOADGEN_STACK_NAME)[0].id
         try:
-            heat.stack_delete(heat, stack_id)
+            heat.stack_delete(heat, delete_id)
         except:  # noqa: E722
             # to be done: add logging here
             pass
-        return heat.polled_expected_status(heat, stack_id, STACK_DELETED)
+        return heat.polled_expected_status(heat, delete_id, STACK_DELETED)
+
+    def load_existed(self):
+        heat = Heatclient()
+        return heat.stack_existed(LOADGEN_STACK_NAME, heat)

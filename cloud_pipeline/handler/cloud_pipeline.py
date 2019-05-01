@@ -12,6 +12,12 @@ class CloudPipelineBase:
     def load_gen(self):
         return self.load_generater.setup()
 
+    def load_existed(self):
+        return self.load_generater.load_existed()
+
+    def vnf_existed(self):
+        return self.vnf.vnf_existed()
+
     def benchmark_run(self, arguments):
         conf_handler = ConfHandler(arguments)
         conf_handler.apply()
@@ -20,3 +26,10 @@ class CloudPipelineBase:
         data_collector = DataCollector(arguments)
         data_collector.collect()
         return data_collector.benchmark
+
+    def vnf_cleanup(self):
+        self.vnf.cleanup()
+
+    def load_cleanup(self):
+        if self.load_existed():
+            self.load_generater.cleanup()

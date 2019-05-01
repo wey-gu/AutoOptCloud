@@ -11,6 +11,8 @@ from ansible.vars.manager import VariableManager
 from ansible.executor.playbook_executor import PlaybookExecutor
 from ..utils.h_client import Heatclient
 from ..config import VNF_STACK_NAME, WORKING_DIR, ARG_KEYS, PLAYBOOK_FETCHDATA
+from ..config import COLLECTION_RETRY
+from ..utils.retry import retry
 
 
 INVENTORY_PATH = WORKING_DIR + "ansible_hosts"
@@ -143,19 +145,25 @@ class DataCollector:
         ]
         self.benchmark = numpy.prod(self.benchmarkList)
 
+    @retry(COLLECTION_RETRY, delay=60, backoff=3)
     def collect(self):
-        self.setup_ansible()
-        self.fetch_files()
-        self.parse_data()
-        benchmark_data_record = dict(zip(
-            DB_CSV_NEW_COLUMNS,
-            [
-                self.benchmark,
-                self.new_id,
-            ] + self.benchmarkList
-        ))
-        self.data_record.update(benchmark_data_record)
-        self.insert_row_db()
+        try:
+            self.setup_ansible()
+            self.fetch_files()
+            self.parse_data()
+            benchmark_data_record = dict(zip(
+                DB_CSV_NEW_COLUMNS,
+                [
+                    self.benchmark,
+                    self.new_id,
+                ] + self.benchmarkList
+            ))
+            self.data_record.update(benchmark_data_record)
+            self.insert_row_db()
+            return True
+        except:  # noqa: E722
+            # to be done, add raise info/logging
+            return False
 
     def benchmark_rabbitmq(self):
         data_path = self.data_path + RABBIT_MQ_LOG

@@ -228,7 +228,7 @@ benchmark_iperf()
     echo BENCHMARK_OK
     update_state succeeded
 
-    load_iperf client "${iperf_server_host}" 16
+    #load_iperf client "${iperf_server_host}" 16
 }
 
 

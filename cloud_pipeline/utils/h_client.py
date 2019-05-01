@@ -51,7 +51,7 @@ class Heatclient:
         return stack
 
     def stack_delete(self, hc, stack_id):
-        hc.stacks.delete(stack_id)
+        hc.client.stacks.delete(stack_id)
 
     @staticmethod
     def is_status_expected(hc, stack_id, status):

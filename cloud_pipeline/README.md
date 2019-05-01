@@ -13,7 +13,8 @@ import numpy as np
 cp = CloudPipeline()
 
 # genarate load
-load_gen = cp.load_gen()
+if not cp.load_existed():
+    load_gen = cp.load_gen()
 
 # wait for a while
 import time
@@ -26,8 +27,10 @@ randomeArgList = np.random.uniform(low=-1.0, high=1.0, size=(len(ARG_KEYS),))
 arg = dict(zip(ARG_KEYS, randomeArgList))
 
 # query a benchmark
-
 benchmark = cp.benchmark_run(arg)
+
+# cleanup vnf benchmark
+cp.vnf_cleanup()
 
 ```
 

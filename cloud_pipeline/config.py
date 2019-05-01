@@ -32,3 +32,4 @@ ARG_KEYS = [
 # data collection and VM benchmark path
 WORKING_DIR = "/var/lib/cloud_pipeline/"
 PLAYBOOK_FETCHDATA = "resources/ansible/playbooks/fetch-data.yaml"
+COLLECTION_RETRY = 3

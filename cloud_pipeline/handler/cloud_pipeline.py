@@ -19,4 +19,4 @@ class CloudPipelineBase:
 
         data_collector = DataCollector(arguments)
         data_collector.collect()
-        return data_collector.data
+        return data_collector.get_benchmark()

@@ -6,6 +6,12 @@
 
 ## Benchmark definitions
 
+
+
+>  This document described benchmark definitions. The `LeTex` could be ugly as it's trying to fit format on both gitlab and github 😭...
+
+
+
 ### rabbitmq benchmark
 
 > command
@@ -326,9 +332,9 @@ What we care here:
 
 > definition
 
-Here we use `Bandwidth` in `Gbits/sec.`  **devision** by  the mean of `Retr`  for this benchmark definition: 
+Here we use `Bandwidth` in `Mbits/sec.`  **devision** by  the mean of `Retr`  for this benchmark definition: 
 
-$$B_{iperf3} = \frac {b}{R}  $$ .
+$$B_{iperf3} = \frac {b}{R}  ​$$ .
 
 ```math
 B_{iperf3} = \frac {b}{R}  
@@ -340,7 +346,7 @@ B_{iperf3} = \frac {b}{R}
 
 $`B`$ : `Benchmark`
 
-$`b`$ : `Bandwidth`
+$`b`​$ : `Bandwidth`
 
 $`R`$:  `Retr`
 

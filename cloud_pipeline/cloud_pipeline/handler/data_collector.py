@@ -1,6 +1,8 @@
 import csv
+import inspect
 import operator
 import os
+import sys
 import numpy
 import subprocess
 from collections import namedtuple
@@ -38,7 +40,10 @@ MYSQL_LOG = "mysql.log"
 IPERF_LOG = "iperf3_c.log"
 CPU_LOG = "cpu.log"
 
-PLAYBOOK_PATH = WORKING_DIR + "cloud_pipeline/" + PLAYBOOK_FETCHDATA
+cloud_pipeline = sys.modules["cloud_pipeline"]
+PLAYBOOK_PATH = os.path.dirname(
+    inspect.getfile(cloud_pipeline)
+) + "/" + PLAYBOOK_FETCHDATA
 
 
 class ResultCallback(CallbackBase):
@@ -54,6 +59,9 @@ class DataCollector:
     def __init__(self, args, ansible_stdout=False):
         self.ansible_stdout = ansible_stdout
         self.data_record = args
+        subprocess.check_output(
+                ["mkdir", "-p", WORKING_DIR]
+            )
         if self.csv_db_missing():
             self.create_csv_db()
             self.new_id = 0

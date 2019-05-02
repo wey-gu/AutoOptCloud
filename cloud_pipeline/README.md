@@ -124,7 +124,7 @@ data_collector.parse_data()
 
 ```python
 data_collector.collect()
-data_collector.get_benchmark
+data_collector.benchmark
 
 ```
 

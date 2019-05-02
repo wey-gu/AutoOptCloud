@@ -36,9 +36,10 @@ class ConfHandler():
     arg = dict(zip(ARG_KEYS, values))
     """
 
-    def __init__(self, arg):
+    def __init__(self, arg_dict):
+        self.arg_validator(arg_dict)
+        arg = { key: str(arg_dict[key]) for key in arg_dict }
         self.apply_command = self._build_command(arg)
-        self.arg_validator(arg)
 
     def apply(self):
         return self._issue_command(self.apply_command)

@@ -24,10 +24,10 @@ time.sleep(5*60)
 randomArgList = np.random.uniform(low=-1.0, high=1.0, size=(len(ARG_KEYS),))
 
 # build argument dict
-arg = dict(zip(ARG_KEYS, randomArgList))
+# arg = dict(zip(ARG_KEYS, randomArgList))
 
 # query a benchmark
-benchmark = cp.benchmark_run(arg)
+benchmark = cp.benchmark_run(*randomArgList)
 
 # cleanup vnf benchmark
 cp.vnf_cleanup()

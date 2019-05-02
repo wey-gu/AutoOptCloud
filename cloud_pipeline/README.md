@@ -21,10 +21,10 @@ import time
 time.sleep(5*60)
 
 # generate a random argument list
-randomeArgList = np.random.uniform(low=-1.0, high=1.0, size=(len(ARG_KEYS),))
+randomArgList = np.random.uniform(low=-1.0, high=1.0, size=(len(ARG_KEYS),))
 
 # build argument dict
-arg = dict(zip(ARG_KEYS, randomeArgList))
+arg = dict(zip(ARG_KEYS, randomArgList))
 
 # query a benchmark
 benchmark = cp.benchmark_run(arg)

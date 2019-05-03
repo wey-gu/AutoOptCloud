@@ -35,4 +35,4 @@ PLAYBOOK_FETCHDATA = "resources/ansible/playbooks/fetch-data.yaml"
 COLLECTION_RETRY = 3
 
 # benchmark_run
-BENCHMARK_RUN_RETRY = 3
+BENCHMARK_RUN_RETRY = 10

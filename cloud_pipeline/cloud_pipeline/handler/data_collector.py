@@ -16,7 +16,10 @@ from ..utils.h_client import Heatclient
 from ..config import VNF_STACK_NAME, WORKING_DIR, ARG_KEYS, PLAYBOOK_FETCHDATA
 from ..config import COLLECTION_RETRY
 from ..utils.retry import retry
+from ..utils.logger import Logger
 
+logger = Logger(__name__)
+_ = logger.get_logger()
 
 INVENTORY_PATH = WORKING_DIR + "ansible_hosts"
 DATA_LOG_PATH = WORKING_DIR + "dataLog/"
@@ -56,9 +59,24 @@ class ResultCallback(CallbackBase):
 
     def v2_runner_on_ok(self, result, *args, **kwargs):
         self.task_ok[result._host.get_name()] = result
+        host = result._host
+		# _.warning(
+        # "===v2_runner_on_ok===host=%s===result=%s" % (host, result._result))
+
+	def v2_runner_on_failed(self,result,ignore_errors=False):
+		host = result._host
+		_.error(
+            "===v2_runner_on_failed====host=%s===result=%s"
+            % (host, result._result))
+
+	def v2_runner_on_unreachable(self,result):
+		host = result._host
+		_.error(
+            "===v2_runner_on_unreachable====host=%s===result=%s"
+            % (host, result._result))
 
 
-class DataCollector:
+class DataCollector():
     def __init__(self, args, ansible_stdout=False):
         self.ansible_stdout = ansible_stdout
         self.data_record = args
@@ -147,14 +165,17 @@ class DataCollector:
         playbook.run()
 
     def parse_data(self):
-        self.benchmarkList = [
-            self.benchmark_rabbitmq(),
-            self.benchmark_fileio(),
-            self.benchmark_mysql(),
-            self.benchmark_iperf(),
-            self.benchmark_cpu()
-        ]
-        self.benchmark = numpy.prod(self.benchmarkList)
+        try:
+            self.benchmarkList = [
+                self.benchmark_rabbitmq(),
+                self.benchmark_fileio(),
+                self.benchmark_mysql(),
+                self.benchmark_iperf(),
+                self.benchmark_cpu()
+            ]
+            self.benchmark = numpy.prod(self.benchmarkList)
+        except Exception as e:
+            _.error("parse_data failed", exc_info=True)
 
     @retry(COLLECTION_RETRY, delay=60, backoff=3)
     def collect(self):
@@ -174,8 +195,8 @@ class DataCollector:
             self.data_record.update(benchmark_data_record)
             self.insert_row_db()
             return True
-        except:  # noqa: E722
-            # to be done, add raise info/logging
+        except Exception as e:
+            _.error("collect failed", exc_info=True)
             return False
 
     def benchmark_rabbitmq(self):

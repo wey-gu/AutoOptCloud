@@ -1,3 +1,4 @@
+import subprocess
 from .vnf_handler import VnfHandler
 from .load_generator import LoadGenerator
 from .conf_handler import ConfHandler
@@ -5,6 +6,7 @@ from .data_collector import DataCollector
 from ..config import ARG_KEYS
 from ..config import BENCHMARK_RUN_RETRY
 from ..utils.retry import retry
+
 
 class CloudPipelineBase():
     def __init__(self):

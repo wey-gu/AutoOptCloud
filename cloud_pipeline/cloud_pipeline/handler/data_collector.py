@@ -2,9 +2,10 @@ import csv
 import inspect
 import operator
 import os
-import sys
 import numpy
+import sys
 import subprocess
+import datetime
 from collections import namedtuple
 from ansible.inventory.manager import InventoryManager
 from ansible.parsing.dataloader import DataLoader
@@ -29,7 +30,9 @@ BENCHMARK_NAMES = [
     "cpu"]
 DB_CSV_NEW_COLUMNS = [
     "benchmark",
-    "id"] + BENCHMARK_NAMES
+    "id",
+    "timestamp"
+    ] + BENCHMARK_NAMES
 
 DB_CSV_HEADER = ARG_KEYS + DB_CSV_NEW_COLUMNS
 
@@ -72,7 +75,7 @@ class DataCollector:
                 ["tail", "-1", DB_CSV_PATH]
             )
             try:
-                self.new_id = int(lastRow.split(",")[-1]) + 1
+                self.new_id = int(lastRow.strip().split(",")[9]) + 1
             except ValueError:
                 self.new_id = 0
 
@@ -159,11 +162,13 @@ class DataCollector:
             self.setup_ansible()
             self.fetch_files()
             self.parse_data()
+            timestamp = datetime.datetime.now().isoformat().split(".")[0]
             benchmark_data_record = dict(zip(
                 DB_CSV_NEW_COLUMNS,
                 [
                     self.benchmark,
                     self.new_id,
+                    timestamp,
                 ] + self.benchmarkList
             ))
             self.data_record.update(benchmark_data_record)

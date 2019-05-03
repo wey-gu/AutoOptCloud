@@ -33,3 +33,6 @@ ARG_KEYS = [
 WORKING_DIR = "/var/lib/cloud_pipeline/"
 PLAYBOOK_FETCHDATA = "resources/ansible/playbooks/fetch-data.yaml"
 COLLECTION_RETRY = 3
+
+# benchmark_run
+BENCHMARK_RUN_RETRY = 3

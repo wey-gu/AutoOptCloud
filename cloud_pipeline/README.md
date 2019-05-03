@@ -85,6 +85,13 @@ vnf.create_vnf()
 > manually test anisble only
 
 ```bash
+
+# only verify connection
+
+ansible VM -m ping -i /var/lib/cloud_pipeline/ansible_hosts
+
+# verify ansible playbook
+
 cd /var/lib/cloud_pipeline/
 
 cat <<EOF > extra_var.json
@@ -100,6 +107,8 @@ ANSIBLE_HOST_KEY_CHECKING=False \
         /var/lib/cloud_pipeline/cloud_pipeline/resources/ansible/playbooks/fetch-data.yaml
 
 ```
+
+> call ansible playbook the python way
 
 ```python
 from cloud_pipeline.handler.data_collector import DataCollector
@@ -125,6 +134,16 @@ data_collector.parse_data()
 ```python
 data_collector.collect()
 data_collector.benchmark
+
+```
+
+## build
+
+```bash
+$ pwd
+~/ML-opt-Cloud
+
+$ tar --exclude .DS_Store -czvf releases/cloud_pipeline.tar.gz cloud_pipeline
 
 ```
 

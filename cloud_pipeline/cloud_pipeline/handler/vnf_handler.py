@@ -30,7 +30,7 @@ class VnfHandler:
             heat.stack_delete(heat, delete_id)
         except:  # noqa: E722
             # to be done: add logging here
-            pass
+            return False
         return heat.polled_expected_status(heat, delete_id, STACK_DELETED)
 
     def vnf_existed(self):

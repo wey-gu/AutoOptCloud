@@ -29,12 +29,12 @@ BENCHMARK_NAMES = [
     "iperf3",
     "cpu"]
 DB_CSV_NEW_COLUMNS = [
-    "benchmark",
     "id",
+    "benchmark",
     "timestamp"
     ] + BENCHMARK_NAMES
 
-DB_CSV_HEADER = ARG_KEYS + DB_CSV_NEW_COLUMNS
+DB_CSV_HEADER = DB_CSV_NEW_COLUMNS + ARG_KEYS
 
 REMOTE_DATA_PATH = WORKING_DIR + "results/"
 RABBIT_MQ_LOG = "rabbitmq.log"
@@ -75,7 +75,7 @@ class DataCollector:
                 ["tail", "-1", DB_CSV_PATH]
             )
             try:
-                self.new_id = int(lastRow.strip().split(",")[9]) + 1
+                self.new_id = int(lastRow.strip().split(",")[0]) + 1
             except ValueError:
                 self.new_id = 0
 
@@ -166,8 +166,8 @@ class DataCollector:
             benchmark_data_record = dict(zip(
                 DB_CSV_NEW_COLUMNS,
                 [
-                    self.benchmark,
                     self.new_id,
+                    self.benchmark,
                     timestamp,
                 ] + self.benchmarkList
             ))

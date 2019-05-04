@@ -220,7 +220,7 @@ benchmark_iperf()
 {
     local return_value=0
     local iperf_server_host="${1}"
-    /usr/bin/iperf3 -c ${iperf_server_host} -t ${IPERF_TIME} -P 16 >> /var/lib/cloud_pipeline/results/iperf3_c.log || return_value=$?
+    /usr/bin/iperf3 -c ${iperf_server_host} -t ${IPERF_TIME} -P 16 >> /var/lib/cloud_pipeline/results/iperf_c.log || return_value=$?
     if [[ ${return_value} != 0 ]]; then
         update_state failed
         return
@@ -255,7 +255,7 @@ write_to_console()
     local benchmark_type="${1}"
     echo "[cloud_pipeline_console_output] file:${benchmark_type}.log" > /dev/console
     #echo "[cloud_pipeline_console_output] file:${benchmark_type}.log"
-    echo "${benchmark_type}.log" > /dev/console
+    #echo "${benchmark_type}.log" > /dev/console
     #echo "${benchmark_type}.log"
     cat /var/lib/cloud_pipeline/results/$benchmark_type.log > /dev/console
     #cat /var/lib/cloud_pipeline/results/$benchmark_type.log

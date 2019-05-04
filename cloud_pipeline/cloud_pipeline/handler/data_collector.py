@@ -43,7 +43,7 @@ REMOTE_DATA_PATH = WORKING_DIR + "results/"
 RABBIT_MQ_LOG = "rabbitmq.log"
 FILEIO_LOG = "fileio.log"
 MYSQL_LOG = "mysql.log"
-IPERF_LOG = "iperf3_c.log"
+IPERF_LOG = "iperf_c.log"
 CPU_LOG = "cpu.log"
 
 cloud_pipeline = sys.modules["cloud_pipeline"]

@@ -60,18 +60,18 @@ class ResultCallback(CallbackBase):
     def v2_runner_on_ok(self, result, *args, **kwargs):
         self.task_ok[result._host.get_name()] = result
         host = result._host
-		# _.warning(
+        # _.warning(
         # "===v2_runner_on_ok===host=%s===result=%s" % (host, result._result))
 
-	def v2_runner_on_failed(self,result,ignore_errors=False):
-		host = result._host
-		_.error(
+    def v2_runner_on_failed(self,result,ignore_errors=False):
+        host = result._host
+        _.error(
             "===v2_runner_on_failed====host=%s===result=%s"
             % (host, result._result))
 
-	def v2_runner_on_unreachable(self,result):
-		host = result._host
-		_.error(
+    def v2_runner_on_unreachable(self,result):
+        host = result._host
+        _.error(
             "===v2_runner_on_unreachable====host=%s===result=%s"
             % (host, result._result))
 

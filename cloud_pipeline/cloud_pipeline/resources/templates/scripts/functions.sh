@@ -249,3 +249,14 @@ benchmark_fileio()
 
     load_fileio 12
 }
+
+write_to_console()
+{
+    local benchmark_type="${1}"
+    echo "[cloud_pipeline_console_output] file:${benchmark_type}.log" > /dev/console
+    echo "[cloud_pipeline_console_output] file:${benchmark_type}.log"
+    echo "${benchmark_type}.log" > /dev/console
+    echo "${benchmark_type}.log" 
+    cat /var/lib/cloud_pipeline/results/$benchmark_type.log > /dev/console
+    cat /var/lib/cloud_pipeline/results/$benchmark_type.log
+}

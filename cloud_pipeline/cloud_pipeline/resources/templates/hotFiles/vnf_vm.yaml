@@ -150,6 +150,25 @@ resources:
             $benchmark_retry$: {get_param: benchmark_retry}
           template: {get_file: ../scripts/benchmark.sh}
 
+  benchmark_console_output_config:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: script
+      config:
+        str_replace:
+          params:
+            $benchmark_type$: { get_param: [scheme, { get_param: index }, benchmark_type] }
+          template: {get_file: ../scripts/fetch_result.sh}
+
+  benchmark_console_output_deploy:
+    type: OS::Heat::SoftwareDeployment
+    properties:
+      config: { get_resource: benchmark_console_output_config }
+      server: { get_resource: vm }
+      signal_transport: NO_SIGNAL
+      actions:
+      - CREATE
+      - UPDATE
   # benchmark_run:
   #   depends_on: [vm]
   #   type: OS::Heat::SoftwareDeployment
@@ -166,3 +185,11 @@ resources:
       - config: {get_resource: user_config}
       - config: {get_resource: include_files}
       - config: {get_resource: benchmark_config}
+
+outputs:
+  result:
+    value:
+      get_attr: [benchmark_console_output_deploy, result]
+  stdout:
+    value:
+      get_attr: [benchmark_console_output_deploy, deploy_stdout]

@@ -27,6 +27,7 @@ benchmark_run()
     esac
 }
 
+
 main()
 {
     # Fetch Heat arguments
@@ -51,6 +52,9 @@ main()
         counter=$((${counter}-1))
         sleep 1;
     done
+
+    sleep 10
+    write_to_console $benchmark_type
 
     if [[ $(check_state succeeded | grep -w CHECK_STATE_NOK) ]]; then
         exit 1

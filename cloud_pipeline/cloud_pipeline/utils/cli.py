@@ -27,8 +27,8 @@ def main():
         if args[0] == "stack":
             check_call(
                 ". /root/openrc; openstack stack event list "
-                "--nested-depth 6 vnf_benchmark_stack --follow"
-                , shell=True)
+                "--nested-depth 6 vnf_benchmark_stack --follow "
+                "| lnav", shell=True)
         if args[0] in ["-h", "--help"]:
             cli_help()
         if args[0] == "load_gen":

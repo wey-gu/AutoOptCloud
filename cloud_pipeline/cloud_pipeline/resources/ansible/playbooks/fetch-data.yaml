@@ -4,35 +4,35 @@
   remote_user: ubuntu
   become: yes
   tasks:
-    - name: wait until benchmark finished
-      shell: "grep succeeded {{ remote_path }}../state"
-      register: grep_succeeded
-      retries: 15
-      delay: 30
-      until: grep_succeeded.rc == 0
-      when: inventory_hostname != "benchmark_vnf-4"
-      ignore_errors: True
+    # - name: wait until benchmark finished
+    #   shell: "grep succeeded {{ remote_path }}../state"
+    #   register: grep_succeeded
+    #   retries: 15
+    #   delay: 30
+    #   until: grep_succeeded.rc == 0
+    #   when: inventory_hostname != "benchmark_vnf-4"
+    #   ignore_errors: True
 
-    - name: get filename
-      shell: "(cd {{ remote_path }} ;/usr/bin/find . -maxdepth 1 -type f) | cut -d'/' -f2"
-      register: files_to_fetch
-      when: inventory_hostname != "benchmark_vnf-4"
-      ignore_errors: True
+    # - name: get filename
+    #   shell: "(cd {{ remote_path }} ;/usr/bin/find . -maxdepth 1 -type f) | cut -d'/' -f2"
+    #   register: files_to_fetch
+    #   when: inventory_hostname != "benchmark_vnf-4"
+    #   ignore_errors: True
 
-    - name: fetch data files
-      fetch:
-        src: "{{ remote_path }}{{ item }}"
-        dest: "{{ data_path }}"
-      with_items: "{{ files_to_fetch.stdout_lines }}"
-      when: inventory_hostname != "benchmark_vnf-4"
-      ignore_errors: True
+    # - name: fetch data files
+    #   fetch:
+    #     src: "{{ remote_path }}{{ item }}"
+    #     dest: "{{ data_path }}"
+    #   with_items: "{{ files_to_fetch.stdout_lines }}"
+    #   when: inventory_hostname != "benchmark_vnf-4"
+    #   ignore_errors: True
 
-    - name: get fetched filename
-      shell: "cp {{ data_path }}*{{ remote_path }}* {{ data_path }}"
-      delegate_to: localhost
-      run_once: True
-      when: inventory_hostname != "benchmark_vnf-4"
-      ignore_errors: True
+    # - name: get fetched filename
+    #   shell: "cp {{ data_path }}*{{ remote_path }}* {{ data_path }}"
+    #   delegate_to: localhost
+    #   run_once: True
+    #   when: inventory_hostname != "benchmark_vnf-4"
+    #   ignore_errors: True
 
     - name: fetch data files from console log
       shell: ". /root/openrc ; openstack console log show $(openstack server list --format value --column ID --ip {{ hostvars[inventory_hostname]['ansible_host'] }}) | grep cloud_pipeline_console_output -A 10240"

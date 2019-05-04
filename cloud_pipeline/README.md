@@ -122,7 +122,7 @@ EOF
 ANSIBLE_HOST_KEY_CHECKING=False \
     ansible-playbook --inventory-file /var/lib/cloud_pipeline/ansible_hosts \
         --extra-vars @/var/lib/cloud_pipeline/extra_var.json \
-        /var/lib/cloud_pipeline/cloud_pipeline/resources/ansible/playbooks/fetch-data.yaml
+        /var/lib/cloud_pipeline/env/lib/python2.7/site-packages/cloud_pipeline/resources/ansible/playbooks/fetch-data.yaml
 
 ```
 
@@ -161,7 +161,7 @@ data_collector.benchmark
 $ pwd
 ~/ML-opt-Cloud
 
-$ tar --exclude .DS_Store -czvf releases/cloud_pipeline.tar.gz cloud_pipeline
+$ ./build.sh
 
 ```
 

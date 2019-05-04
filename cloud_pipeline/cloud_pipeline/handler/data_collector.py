@@ -1,3 +1,4 @@
+# flake8: noqa
 import csv
 import inspect
 import operator
@@ -35,7 +36,7 @@ DB_CSV_NEW_COLUMNS = [
     "id",
     "benchmark",
     "timestamp"
-    ] + BENCHMARK_NAMES
+] + BENCHMARK_NAMES
 
 DB_CSV_HEADER = DB_CSV_NEW_COLUMNS + ARG_KEYS
 
@@ -60,16 +61,14 @@ class ResultCallback(CallbackBase):
     def v2_runner_on_ok(self, result, *args, **kwargs):
         self.task_ok[result._host.get_name()] = result
         host = result._host
-        # _.warning(
-        # "===v2_runner_on_ok===host=%s===result=%s" % (host, result._result))
 
-    def v2_runner_on_failed(self,result,ignore_errors=False):
+    def v2_runner_on_failed(self, result, ignore_errors=False):
         host = result._host
         _.error(
             "===v2_runner_on_failed====host=%s===result=%s"
             % (host, result._result))
 
-    def v2_runner_on_unreachable(self,result):
+    def v2_runner_on_unreachable(self, result):
         host = result._host
         _.error(
             "===v2_runner_on_unreachable====host=%s===result=%s"
@@ -81,8 +80,8 @@ class DataCollector():
         self.ansible_stdout = ansible_stdout
         self.data_record = args
         subprocess.check_output(
-                ["mkdir", "-p", WORKING_DIR]
-            )
+            ["mkdir", "-p", WORKING_DIR]
+        )
         if self.csv_db_missing():
             self.create_csv_db()
             self.new_id = 0
@@ -102,6 +101,7 @@ class DataCollector():
         subprocess.check_call(["mkdir", "-p", self.data_path])
 
     def setup_ansible(self):
+        """ setup ansible """
         heat = Heatclient()
         ansible_hosts = heat.client.resources.get(
             VNF_STACK_NAME, "ansible_hosts").attributes["value"]
@@ -141,7 +141,7 @@ class DataCollector():
                 "connection", "forks", "become", "become_method",
                 "become_user", "check", "listhosts", "listtasks",
                 "listtags", "syntax", "module_path", "diff"
-                ])
+            ])
 
         options = Options(
             connection="ssh", forks=100, become=True,
@@ -195,7 +195,7 @@ class DataCollector():
             self.data_record.update(benchmark_data_record)
             self.insert_row_db()
             return True
-        except Exception as e:
+        except Exception:
             _.error("collect failed", exc_info=True)
             return False
 
@@ -263,7 +263,7 @@ class DataCollector():
     def benchmark_iperf(self):
         data_path = self.data_path + IPERF_LOG
         iperflines = subprocess.check_output(
-            " ".join(["grep", "0.00-60.00", data_path,
+            " ".join(["grep", "0.00-60", data_path,
                       "|", "grep", "sender",
                       "|", "tail", "-n", "1"]),
             shell=True).strip().split("\n")

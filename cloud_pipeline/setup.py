@@ -1,8 +1,28 @@
+import inspect
+import os
+import sys
 from setuptools import setup, find_packages
+from setuptools.command.install import install
+from subprocess import check_call
+
+
+class PostInstallCommand(install):
+    """Post-installation for installation mode."""
+    def run(self):
+        if sys.platform in ["linux", "linux2"]:
+            from cloud_pipeline.config import LNAV_PATH
+            cloud_pipeline = sys.modules["cloud_pipeline"]
+            LNAV_ZIP_PATH = os.path.dirname(
+                inspect.getfile(cloud_pipeline)
+                ) + "/" + LNAV_PATH
+            check_call("apt-get install unzip".split(), shell=True)
+            check_call(["unzip", "-o", LNAV_ZIP_PATH, "-d", "/opt/"], shell=True)
+            check_call("ln -sf /opt/lnav-0.8.5/lnav /usr/sbin/lnav", shell=True)
+        install.run(self)
 
 setup(
     name='cloud-pipeline',
-    version='0.2',
+    version='0.4',
     description='cloud pipeline package',
     long_description='The cloud-pipeline for \
         querying given benchmark of an OpenStack env',
@@ -16,4 +36,12 @@ setup(
         "python-keystoneclient",
         "polling",
     ],
+    cmdclass={
+        'install': PostInstallCommand,
+    },
+    entry_points = {
+        'console_scripts': [
+            'cloudp = cloud_pipeline.utils.cli:main'
+        ]
+    }
     )

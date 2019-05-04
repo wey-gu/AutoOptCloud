@@ -1,5 +1,23 @@
 ## API reference
 
+### command line
+
+```bash
+$ pip install cloud_pipeline.tar.gz
+$ cloudp
+
+usage: cloudp
+
+Commands:
+  log            Monitoring cloud pipeline logs
+  stack          Monitoring VNF events
+  load_gen       Load generation
+  load_clean     Load cleanup
+  vnf_create     VNF create
+  vnf_clean      VNF cleanup
+
+```
+
 ### cloud_pipeline
 
 ```python
@@ -46,7 +64,7 @@ openstack stack create --template load_gen.yaml --environment  envFiles/load_gen
 ## manually query a benchmark
 
 ```bash
-cd /var/lib/cloud_pipeline/cloud_pipeline/resources/templates
+cd env/lib/python2.7/site-packages/cloud_pipeline/resources/templates
 openstack stack create --template vnf.yaml --environment  envFiles/vnf_env.yaml  --wait vnf_benchmark_stack
 ```
 

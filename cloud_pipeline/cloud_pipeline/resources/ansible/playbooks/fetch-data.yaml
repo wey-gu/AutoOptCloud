@@ -46,6 +46,6 @@
     - name: write console log to data
       copy:
         content: "{{ console_log.stdout }}"
-        dest: "{{ data_path }}{{ console_log.stdout_lines[0].split(':')[-1] }}"
+        dest: "{{ data_path }}{{ console_log.stdout_lines[0].split(':')[-1].split('.log')[0].log }}"
       when: inventory_hostname != "benchmark_vnf-4"
       delegate_to: localhost

@@ -31,6 +31,7 @@ class CloudPipelineBase():
 
             self.data_collector = DataCollector(arguments)
             self.data_collector.collect()
+            self.data_collector.benchmark
             return True
         except:  # noqa: E722
             return False

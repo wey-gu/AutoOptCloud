@@ -220,7 +220,7 @@ benchmark_iperf()
 {
     local return_value=0
     local iperf_server_host="${1}"
-    /usr/bin/iperf3 -c ${iperf_server_host} -t ${IPERF_TIME} -P 16 >> /var/lib/cloud_pipeline/results/iperf_c.log || return_value=$?
+    /usr/bin/iperf3 -c ${iperf_server_host} -t ${IPERF_TIME} -P 16 | tail -n 128 >> /var/lib/cloud_pipeline/results/iperf_c.log || return_value=$?
     if [[ ${return_value} != 0 ]]; then
         update_state failed
         return

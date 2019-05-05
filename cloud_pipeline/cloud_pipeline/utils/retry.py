@@ -3,6 +3,7 @@ referring to https://wiki.python.org/moin/PythonDecoratorLibrary#Retry
 '''
 import time
 import math
+from cloud_pipeline.utils.logger import Logger
 
 
 # Retry decorator with exponential backoff
@@ -27,20 +28,29 @@ def retry(tries, delay=3, backoff=2):
 
     def deco_retry(f):
         def f_retry(*args, **kwargs):
-            mtries, mdelay = tries, delay  # make mutable
+            # logger init
+            logger = Logger("retry_handler: " + f.__name__)
+            _ = logger.get_logger()
 
-            rv = f(*args, **kwargs)  # first attempt
+            mtries, mdelay = tries, delay # make mutable
+
+            rv = f(*args, **kwargs)       # first attempt
             while mtries > 0:
-                if rv is True:  # Done on success
+                if rv is True:            # Done on success
                     return True
 
-                mtries -= 1            # consume an attempt
-                time.sleep(mdelay)  # wait...
-                mdelay *= backoff    # make future wait longer
+                mtries -= 1               # consume an attempt
+                _.info(
+                    "Last attempt failed... left tries: %s and will wait for %s sec."
+                    % (str(mtries), str(mdelay)))
+                time.sleep(mdelay)        # wait...
+                mdelay *= backoff         # make future wait longer
 
-                rv = f(*args, **kwargs)  # Try again
+                rv = f(*args, **kwargs)   # Try again
+            _.info(
+            "Ran out of tries..."
+            % (str(mtries), str(mdelay)))
+            return False                  # Ran out of tries :-(
 
-            return False  # Ran out of tries :-(
-
-        return f_retry  # true decorator -> decorated function
+        return f_retry   # true decorator -> decorated function
     return deco_retry    # @retry(arg[, ...]) -> true decorator

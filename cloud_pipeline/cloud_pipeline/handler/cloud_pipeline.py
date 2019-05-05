@@ -6,6 +6,10 @@ from .data_collector import DataCollector
 from ..config import ARG_KEYS
 from ..config import BENCHMARK_RUN_RETRY
 from ..utils.retry import retry
+from ..utils.logger import Logger
+
+logger = Logger(__name__)
+_ = logger.get_logger()
 
 
 class CloudPipelineBase():
@@ -30,8 +34,13 @@ class CloudPipelineBase():
             self.vnf.create_vnf()
 
             self.data_collector = DataCollector(arguments)
+            _.info("collect started with: %s" % (str(arguments)))
             self.data_collector.collect()
             self.data_collector.benchmark
+            _.info(
+                "collect finished, benchmark: %s"
+                % (str(self.data_collector.benchmark))
+                )
             return True
         except:  # noqa: E722
             return False
@@ -40,6 +49,7 @@ class CloudPipelineBase():
         w_iowait_p, w_frequency, w_idle_p, w_cpu_p, w_kernel_p):
         arguments = dict(locals())
         arguments.pop("self")
+        _.info("benchmark_run with: %s" % (str(arguments)))
         self._benchmark_run(arguments)
         return self.data_collector.benchmark
 

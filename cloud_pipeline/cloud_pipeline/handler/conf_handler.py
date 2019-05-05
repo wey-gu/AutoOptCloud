@@ -3,7 +3,10 @@ import os
 import subprocess
 import numpy as np
 from ..config import APPLY_CONF_TEMPLATE_PATH, ARG_KEYS
+from ..utils.logger import Logger
 
+logger = Logger(__name__)
+_ = logger.get_logger()
 
 class PuppetTemplate(Template):
     """
@@ -46,10 +49,15 @@ class ConfHandler():
 
     def arg_validator(self, arg):
         for key in ARG_KEYS:
-            assert (key in arg), "Invalid arg: missing %s in arguments" % (key)
-            assert (
-                type(arg[key]) in [float, np.float32, np.float64]
-            ), "Invalid tye: %s should be float" % (key)
+            try:
+                assert (key in arg), "Invalid arg: missing %s in arguments" % (key)
+                assert (
+                    type(arg[key]) in [float, np.float32, np.float64]
+                ), "Invalid tye: %s should be float" % (key)
+            except AssertionError as e:
+                _.error(str(e))
+                raise
+        _.info("Arguments is valid: %s" % (str(arg)))
 
     def _build_command(self, arg):
         template_path = os.path.join(

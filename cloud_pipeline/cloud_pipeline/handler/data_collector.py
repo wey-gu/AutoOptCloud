@@ -60,6 +60,9 @@ class ResultCallback(CallbackBase):
     def v2_runner_on_ok(self, result, *args, **kwargs):
         self.task_ok[result._host.get_name()] = result
         host = result._host
+        _.info(
+            "===v2_runner_on_ok====host=%s===result=%s"
+            % (host, result._result))
 
     def v2_runner_on_failed(self, result, ignore_errors=False):
         host = result._host
@@ -75,7 +78,7 @@ class ResultCallback(CallbackBase):
 
 
 class DataCollector():
-    def __init__(self, args, ansible_stdout=False):
+    def __init__(self, args, ansible_stdout=False, new_id=None):
         self.ansible_stdout = ansible_stdout
         self.data_record = args
         subprocess.check_output(
@@ -94,6 +97,8 @@ class DataCollector():
                 self.new_id = int(lastRow.strip().split(",")[0]) + 1
             except ValueError:
                 self.new_id = 0
+        if new_id:
+            self.new_id = new_id
 
         self.data_path = DATA_LOG_PATH + str(self.new_id) + "/"
         # create data path
@@ -105,6 +110,7 @@ class DataCollector():
         ansible_hosts = heat.client.resources.get(
             VNF_STACK_NAME, "ansible_hosts").attributes["value"]
         inventory_string = "[VM]\n" + ansible_hosts + "\n"
+        _.info("setup_ansible started...")
         with open(INVENTORY_PATH, "w") as inventory_file:
             inventory_file.write(inventory_string)
 
@@ -161,9 +167,11 @@ class DataCollector():
         if not self.ansible_stdout:
             results_callback = ResultCallback()
             playbook._tqm._stdout_callback = results_callback
+        _.info("fetch_files started...")
         playbook.run()
 
     def parse_data(self):
+        _.info("parse_data started...")
         try:
             self.benchmarkList = [
                 self.benchmark_rabbitmq(),
@@ -178,6 +186,7 @@ class DataCollector():
 
     @retry(COLLECTION_RETRY, delay=60, backoff=3)
     def collect(self):
+        _.info("collect started...")
         try:
             self.setup_ansible()
             self.fetch_files()
@@ -266,8 +275,12 @@ class DataCollector():
                       "|", "grep", "sender",
                       "|", "tail", "-n", "1"]),
             shell=True).strip().split("\n")
-        self.iperf_bandwidth_Gbps = float(iperflines[-1].split()[5])
-        self.iperf_retry = float(iperflines[-1].split()[7])
+        sum_line = iperflines[-1]
+        if "Mbits" in sum_line:
+            self.iperf_bandwidth_Gbps = float(sum_line.split()[5]) / 1024
+        else:
+            self.iperf_bandwidth_Gbps = float(sum_line.split()[5])
+        self.iperf_retry = float(sum_line.split()[7])
         self.iperf_bm = (
             self.iperf_bandwidth_Gbps * 1024 / self.iperf_retry)
         return self.iperf_bm

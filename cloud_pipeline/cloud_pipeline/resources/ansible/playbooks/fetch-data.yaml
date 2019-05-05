@@ -35,7 +35,7 @@
     #   ignore_errors: True
 
     - name: fetch data files from console log
-      shell: ". /root/openrc ; openstack console log show $(openstack server list --format value --column ID --ip {{ hostvars[inventory_hostname]['ansible_host'] }}) | grep cloud_pipeline_console_output -A 10240"
+      shell: ". /root/openrc ; openstack console log show $(openstack server list --format value --column ID --name {{ inventory_hostname[-1] }} --ip ^{{ hostvars[inventory_hostname]['ansible_host'] }}$) | grep cloud_pipeline_console_output -A 10240"
       register: console_log
       when: inventory_hostname != "benchmark_vnf-4"
       delegate_to: localhost

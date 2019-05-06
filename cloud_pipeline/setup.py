@@ -22,7 +22,7 @@ class PostInstallCommand(install):
 
 setup(
     name='cloud-pipeline',
-    version='0.4',
+    version='0.5',
     description='cloud pipeline package',
     long_description='The cloud-pipeline for \
         querying given benchmark of an OpenStack env',

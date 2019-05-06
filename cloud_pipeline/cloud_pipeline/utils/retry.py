@@ -29,7 +29,7 @@ def retry(tries, delay=3, backoff=2):
     def deco_retry(f):
         def f_retry(*args, **kwargs):
             # logger init
-            logger = Logger("retry_handler: " + f.__name__)
+            logger = Logger("retry_handler." + f.__name__)
             _ = logger.get_logger()
 
             mtries, mdelay = tries, delay # make mutable

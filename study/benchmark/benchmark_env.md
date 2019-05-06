@@ -206,8 +206,8 @@ SQL statistics:
         write:                           222104
         other:                           111052
         total:                           1110520
-    transactions:                        55526  (462.61 per sec.)   # we care about this
-    queries:                             1110520 (9252.17 per sec.) 
+    transactions:                        55526  (462.61 per sec.)   
+    queries:                             1110520 (9252.17 per sec.) # we care about this
     ignored errors:                      0      (0.00 per sec.)
     reconnects:                          0      (0.00 per sec.)
 
@@ -229,7 +229,7 @@ Threads fairness:
 
 > definition
 
-Here we use `transactions per sec.` **devision** by  the mean of `95th percentile latency` in `ms ` $`L`$ for this benchmark definition: 
+Here we use `queries per sec.` **devision** by  the mean of `95th percentile latency` in `ms ` $`L`$ for this benchmark definition: 
 
 $$B_{mysql} = \frac {R}{L}  ​$$ .
 

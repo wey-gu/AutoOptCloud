@@ -3,14 +3,16 @@
 # nova flavor-delete 040436
 # nova flavor-create U04-RAM04-DISK-36 040436 4096 36 04
 # nova flavor-key 040436 set hw:mem_page_size=1048576
+# nova flavor-key 040436 set hw:cpu_policy=shared
 # nova flavor-list --ext
 #
 
 parameters:
   host_count: 6
   image: bionic-server-cloudimg-amd64-cloud-pipeline
-  external_network: 82d72b6b-5a85-42c5-9086-71e9f773d1ff
-  external_subnet: bfbef939-36d4-4e4f-b22a-5ad1aafb5d1f
+  nova_availability_zone: machineLearning
+  external_network: a36f3ae0-b826-4689-a62f-73548ab79c40
+  external_subnet: 6eec77e8-1647-4658-a1cb-39c9867549b7
   hostname_pre_fix: benchmark_vnf
   benchmark_retry: 3
   scheme:
@@ -42,4 +44,4 @@ parameters:
 
   # example only, replace your own pub keys here
   public_key: >
-    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3CLc1qPFfsAvmSo66gk8DPmTjRjUn5ykbB5/HZhN1NipnJqpbAvRf4hntaNJVEDHJc222AiF0wqoqc3EXaGgvqL/uttM8Owy5LEv+MGOLnNt8hIsxeVgzOBxJPlrePxR8L17FK+KKZzaITm7lJI9pChY4UaZZUA7B2MkZgB6UO7e0UessP8huaXs8650Cjfmy2JxXQLay9V6I4jw59pNo39ypSINScQW51tSixngg1NSkKqnILuDRz4cjU/uX7pnAsmKG+HlmW11E6mscHIilD1tuUGgVQyc1eljiezl1jdYqcRPVErjBaDrhnjbvuOJ8G3s/aXZ2MJuAlio6Jq6N
+    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDdP+7J0xJOFxpR5h8Y+st4PtdgfzmOmK5//+SaIlLgJUPkREOt8PG5y/yh3Yh8Qvjk1eiQ5O05GD2xkYDjmwRxc+Vff1lF4gl4iscTp6ybk30ogCeyNTWwxbDU/XoKkdZubgIAD+AcCBeUAqR0S3KycemVW/J3gNe37+4HqGjqfauzW4tjhp1dqUPAqx5lJwvcjeLdX1IDQ7DJ06defpG0PxduuY7xRCCmRzZiNSVXqifoGPLDpioHpI67yqJu+5gQFq1f8iq0/cLDvRpRA4fHTaP739XNfDirSnpErJWGXoOiVT+zUpMDJtHo3v8MobT70P1TlU/kVyEcjt2fl67v

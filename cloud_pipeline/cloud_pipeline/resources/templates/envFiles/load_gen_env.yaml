@@ -14,6 +14,7 @@
 parameters:
   host_count: 4
   image: bionic-server-cloudimg-amd64-cloud-pipeline
+  nova_availability_zone: machineLearning
   # network: <>
   # subnet: <>
   # at least /24 CIDR
@@ -56,4 +57,4 @@ parameters:
       iperf_role: server
   # example only, replace your own pub keys here
   public_key: >
-    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3CLc1qPFfsAvmSo66gk8DPmTjRjUn5ykbB5/HZhN1NipnJqpbAvRf4hntaNJVEDHJc222AiF0wqoqc3EXaGgvqL/uttM8Owy5LEv+MGOLnNt8hIsxeVgzOBxJPlrePxR8L17FK+KKZzaITm7lJI9pChY4UaZZUA7B2MkZgB6UO7e0UessP8huaXs8650Cjfmy2JxXQLay9V6I4jw59pNo39ypSINScQW51tSixngg1NSkKqnILuDRz4cjU/uX7pnAsmKG+HlmW11E6mscHIilD1tuUGgVQyc1eljiezl1jdYqcRPVErjBaDrhnjbvuOJ8G3s/aXZ2MJuAlio6Jq6N
+    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDdP+7J0xJOFxpR5h8Y+st4PtdgfzmOmK5//+SaIlLgJUPkREOt8PG5y/yh3Yh8Qvjk1eiQ5O05GD2xkYDjmwRxc+Vff1lF4gl4iscTp6ybk30ogCeyNTWwxbDU/XoKkdZubgIAD+AcCBeUAqR0S3KycemVW/J3gNe37+4HqGjqfauzW4tjhp1dqUPAqx5lJwvcjeLdX1IDQ7DJ06defpG0PxduuY7xRCCmRzZiNSVXqifoGPLDpioHpI67yqJu+5gQFq1f8iq0/cLDvRpRA4fHTaP739XNfDirSnpErJWGXoOiVT+zUpMDJtHo3v8MobT70P1TlU/kVyEcjt2fl67v

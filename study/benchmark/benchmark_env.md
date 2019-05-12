@@ -2,8 +2,6 @@
 
 
 
-
-
 ## Benchmark definitions
 
 
@@ -41,7 +39,7 @@ id: test-085859-070, receiving rate avg: 17 msg/s
 
 > definition
 
-Here we use `receiving rate avg` **devision** by  the mean of `95th consumer latency` in `ms ` : $`\frac {\sum_{95th}l } {n \times 1000}`​$ for this benchmark definition: 
+Here we use `receiving rate avg` **devision** by  the mean of `95th consumer latency` in `ms ` : $`\frac {\sum_{95th}l } {n \times 1000}`$ for this benchmark definition: 
 
 $$B_{rabbitmq} = \frac {R}{L}  $$ .
 
@@ -55,7 +53,7 @@ B_{rabbitmq} = \frac {R}{L}
 
 $`B`$ : `Benchmark`
 
-$`R`​$ : `receiving rate avg`
+$`R`$ : `receiving rate avg`
 
 $`l`$:  `consumer latency`
 
@@ -231,7 +229,7 @@ Threads fairness:
 
 Here we use `queries per sec.` **devision** by  the mean of `95th percentile latency` in `ms ` $`L`$ for this benchmark definition: 
 
-$$B_{mysql} = \frac {R}{L}  ​$$ .
+$$B_{mysql} = \frac {R}{L}  $$ .
 
 ```math
 B_{mysql} = \frac {R}{L} 

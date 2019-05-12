@@ -1,7 +1,7 @@
 OS_TENANT_NAME = "admin"
 OS_USERNAME = "admin"
 OS_PASSWORD = "admin"
-OS_AUTH_URL = "http://192.168.2.28:5000/v2.0"
+OS_AUTH_URL = "http://192.168.2.34:5000/v2.0"
 OS_CACERT = "/path/to/certs/OS-ca.crt"
 
 # VNF for benchmark

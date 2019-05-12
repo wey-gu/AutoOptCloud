@@ -3,7 +3,7 @@ import os
 import sys
 from setuptools import setup, find_packages
 from setuptools.command.install import install
-from subprocess import check_call
+from subprocess import check_output
 
 
 class PostInstallCommand(install):
@@ -15,9 +15,10 @@ class PostInstallCommand(install):
             LNAV_ZIP_PATH = os.path.dirname(
                 inspect.getfile(cloud_pipeline)
                 ) + "/" + LNAV_PATH
-            check_call("apt-get install unzip".split(), shell=True)
-            check_call(["unzip", "-o", LNAV_ZIP_PATH, "-d", "/opt/"], shell=True)
-            check_call("ln -sf /opt/lnav-0.8.5/lnav /usr/sbin/lnav", shell=True)
+            check_output("/bin/mkdir -p /opt/lnav-0.8.5/".split())
+            check_output("/usr/bin/apt-get install unzip".split())
+            check_output(["unzip", "-o", LNAV_ZIP_PATH, "-d", "/opt/"])
+            check_output("ln -sf /opt/lnav-0.8.5/lnav /usr/sbin/lnav", shell=True)
         install.run(self)
 
 setup(

@@ -28,7 +28,7 @@ import numpy as np
 
 
 # instantiate cloud_pipeline
-cp = CloudPipeline()
+cp = CloudPipeline(fake=False)
 
 # genarate load
 if not cp.load_existed():

@@ -1,9 +1,9 @@
-import subprocess
+import random
+import time
 from .vnf_handler import VnfHandler
 from .load_generator import LoadGenerator
 from .conf_handler import ConfHandler
 from .data_collector import DataCollector
-from ..config import ARG_KEYS
 from ..config import BENCHMARK_RUN_RETRY
 from ..utils.retry import retry
 from ..utils.logger import Logger
@@ -13,9 +13,10 @@ _ = logger.get_logger()
 
 
 class CloudPipelineBase():
-    def __init__(self):
+    def __init__(self, fake=False):
         self.vnf = VnfHandler()
         self.load_generater = LoadGenerator()
+        self.isFake = fake
 
     def load_gen(self):
         return self.load_generater.setup()
@@ -45,13 +46,18 @@ class CloudPipelineBase():
         except:  # noqa: E722
             return False
 
-    def benchmark_run(self, w_ram, w_disk, w_user_p,
-        w_iowait_p, w_frequency, w_idle_p, w_cpu_p, w_kernel_p):
+    def benchmark_run(
+            self, w_ram, w_disk, w_user_p, w_iowait_p, w_frequency,
+            w_idle_p, w_cpu_p, w_kernel_p):
         arguments = dict(locals())
         arguments.pop("self")
         _.info("benchmark_run with: %s" % (str(arguments)))
-        self._benchmark_run(arguments)
-        return self.data_collector.benchmark
+        if not self.isFake:
+            self._benchmark_run(arguments)
+            return self.data_collector.benchmark
+        else:
+            time.sleep(10)
+            return random.random()
 
     def vnf_cleanup(self):
         self.vnf.cleanup()

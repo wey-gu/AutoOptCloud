@@ -181,7 +181,7 @@ class DataCollector():
                 self.benchmark_cpu()
             ]
             self.benchmark = numpy.prod(self.benchmarkList)
-        except Exception as e:
+        except Exception:
             _.error("parse_data failed", exc_info=True)
 
     @retry(COLLECTION_RETRY, delay=60, backoff=3)

@@ -28,7 +28,7 @@ class VnfHandler:
                 stack_name=VNF_STACK_NAME
             )
             stack_id = stack["stack"]["id"]
-        except Exception as e:
+        except Exception:
             _.error("stack_create failed...")
             return False
         return heat.polled_expected_status(heat, stack_id, STACK_CREATED)
@@ -39,7 +39,7 @@ class VnfHandler:
         delete_id = heat.stack_filter(heat, VNF_STACK_NAME)[0].id
         try:
             heat.stack_delete(heat, delete_id)
-        except Exception as e:
+        except Exception:
             _.error("cleanup failed...")
             return False
         return heat.polled_expected_status(heat, delete_id, STACK_DELETED)

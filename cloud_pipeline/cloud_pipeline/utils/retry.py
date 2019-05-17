@@ -32,25 +32,26 @@ def retry(tries, delay=3, backoff=2):
             logger = Logger("retry_handler." + f.__name__)
             _ = logger.get_logger()
 
-            mtries, mdelay = tries, delay # make mutable
+            mtries, mdelay = tries, delay  # make mutable
 
-            rv = f(*args, **kwargs)       # first attempt
+            rv = f(*args, **kwargs)        # first attempt
             while mtries > 0:
-                if rv is True:            # Done on success
+                if rv is True:             # Done on success
                     return True
 
-                mtries -= 1               # consume an attempt
+                mtries -= 1                # consume an attempt
                 _.info(
-                    "Last attempt failed... left tries: %s and will wait for %s sec."
+                    "Last attempt failed... "
+                    "left tries: %s and will wait for %s sec."
                     % (str(mtries), str(mdelay)))
-                time.sleep(mdelay)        # wait...
-                mdelay *= backoff         # make future wait longer
+                time.sleep(mdelay)         # wait...
+                mdelay *= backoff          # make future wait longer
 
-                rv = f(*args, **kwargs)   # Try again
+                rv = f(*args, **kwargs)    # Try again
             _.info(
-            "Ran out of tries..."
-            % (str(mtries), str(mdelay)))
-            return False                  # Ran out of tries :-(
+                "Ran out of tries..."
+                % (str(mtries), str(mdelay)))
+            return False                   # Ran out of tries :-(
 
         return f_retry   # true decorator -> decorated function
     return deco_retry    # @retry(arg[, ...]) -> true decorator

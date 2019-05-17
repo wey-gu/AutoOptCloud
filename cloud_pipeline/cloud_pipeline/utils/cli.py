@@ -33,6 +33,7 @@ subcommands = {
     "get_bench": "Get benchmark per id"
 }
 
+
 class bcolors():
     HEADER = "\033[95m"
     OKBLUE = "\033[94m"
@@ -42,6 +43,7 @@ class bcolors():
     ENDC = "\033[0m"
     BOLD = "\033[1m"
     UNDERLINE = "\033[4m"
+
 
 def main():
     args = sys.argv[1:]
@@ -66,7 +68,7 @@ def main():
                 cp.load_cleanup()
         if args[0] == "vnf_create":
             heat = Heatclient()
-            stack = heat.stack_create(
+            heat.stack_create(
                 hc=heat.client,
                 HOT_path=VNF_HOT_PATH,
                 env_path=VNF_ENV_PATH,
@@ -125,7 +127,8 @@ def main():
 def arg_validator(args):
     """argument validator"""
     assert len(args) > 0, "No Sub Commands given"
-    assert args[0] in subcommands.keys(), "ERROR: unknown subcommands %s" % args[1]
+    assert args[0] in subcommands.keys(), \
+        "ERROR: unknown subcommands %s" % args[1]
 
 
 def cli_help():
@@ -134,5 +137,7 @@ def cli_help():
         bcolors.FAIL + "ERROR:" + bcolors.ENDC +
         "\nInvalid argument"
     )
+
+
 if __name__ == '__main__':
     main()

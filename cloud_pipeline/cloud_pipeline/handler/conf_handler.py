@@ -8,6 +8,7 @@ from ..utils.logger import Logger
 logger = Logger(__name__)
 _ = logger.get_logger()
 
+
 class PuppetTemplate(Template):
     """
     PuppetTemplate
@@ -41,7 +42,7 @@ class ConfHandler():
 
     def __init__(self, arg_dict):
         self.arg_validator(arg_dict)
-        arg = { key: str(arg_dict[key]) for key in arg_dict }
+        arg = {key: str(arg_dict[key]) for key in arg_dict}
         self.apply_command = self._build_command(arg)
 
     def apply(self):
@@ -50,7 +51,8 @@ class ConfHandler():
     def arg_validator(self, arg):
         for key in ARG_KEYS:
             try:
-                assert (key in arg), "Invalid arg: missing %s in arguments" % (key)
+                assert (
+                    key in arg), "Invalid arg: missing %s in arguments" % (key)
                 assert (
                     type(arg[key]) in [float, np.float32, np.float64]
                 ), "Invalid tye: %s should be float" % (key)

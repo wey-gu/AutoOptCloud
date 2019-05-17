@@ -18,8 +18,10 @@ class PostInstallCommand(install):
             check_output("/bin/mkdir -p /opt/lnav-0.8.5/".split())
             check_output("/usr/bin/apt-get install unzip".split())
             check_output(["unzip", "-o", LNAV_ZIP_PATH, "-d", "/opt/"])
-            check_output("ln -sf /opt/lnav-0.8.5/lnav /usr/sbin/lnav", shell=True)
+            check_output(
+                "ln -sf /opt/lnav-0.8.5/lnav /usr/sbin/lnav", shell=True)
         install.run(self)
+
 
 setup(
     name='cloud-pipeline',
@@ -40,7 +42,7 @@ setup(
     cmdclass={
         'install': PostInstallCommand,
     },
-    entry_points = {
+    entry_points={
         'console_scripts': [
             'cloudp = cloud_pipeline.utils.cli:main'
         ]

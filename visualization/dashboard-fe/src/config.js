@@ -1,4 +1,4 @@
-const DEBUG = false
+const DEBUG = true
 let backendURL = 'http://localhost:5000'
 if (!DEBUG) {
     backendURL = 'https://cloud-opt.siwei.info:5000'

@@ -74,6 +74,9 @@ export default {
     return {
       drawer: false,
     }
-  }
+  },
+  created () {
+    this.$store.dispatch('getData')
+  },
 }
 </script>

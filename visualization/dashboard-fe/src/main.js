@@ -22,7 +22,7 @@ Vue.use(new VueSocketIO({
 
 const routes = [
   { path: '/', component: Dashboard },
-  { path: '/data', component: DataTable },
+  { path: '/datatable', component: DataTable },
 ]
 
 const router = new VueRouter({

@@ -13,13 +13,13 @@ export default new Vuex.Store({
     },
   },
   getters: {
-    chartjs_perf: state => {
+    chart_data_perf: state => {
       return state.data.charjs_datas.peformance
     },
-    chartjs_w: state => {
+    chart_data_w: state => {
       return state.data.charjs_datas.weighers
     },
-    handsontable: state => {
+    handsontable_data: state => {
       return state.data.handsontable_datas.weighers
     },
   },

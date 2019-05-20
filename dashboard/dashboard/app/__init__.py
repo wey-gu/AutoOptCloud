@@ -5,15 +5,18 @@ import requests
 import sys
 import time
 
-from flask import Flask, jsonify, request   
+from flask import Flask, jsonify, request, g
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from flask_socketio import emit, disconnect
-from watchdog.events import FileSystemEventHandler
+from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
+from ..config import Config
 
-DATA_CSV_PATH = "/var/lib/cloud_pipeline/data.csv"
-BACKEND_ENDPOINT = "http://localhost:8080"
+
+DATA_CSV_FOLDER_PATH = "/var/lib/cloud_pipeline"
+DATA_CSV_PATH = DATA_CSV_FOLDER_PATH + "/data.csv"
+BACKEND_ENDPOINT = "http://localhost:5000"
 NORMALIZATION = {
     "rabbitmq": lambda x: np.divide(float(x), 1000),
     "fileio": lambda x: np.divide(float(x), 10),
@@ -23,40 +26,7 @@ NORMALIZATION = {
     "benchmark": lambda x: np.divide(np.log(float(x)), 5)
 }
 
-def create_backend_instance():
-    app = Flask(__name__)
-    socketio = SocketIO()
-    DB = json.dumps(parse_data()) # closure as memory database
-
-    # socketio instantiation
-    socketio.init_app(app)
-    # enable CORS
-    CORS(app)
-
-    # http server
-    @app.route("/data", methods=["GET", "POST"])
-    def data(DB):
-        """ get and post all data """
-        if request.method == "GET":
-            return jsonify(DB)
-        if request.method == "POST":
-            DB = request.get_json()
-            emit("updatedata", DB, broadcast=True)
-
-
-def create_data_watchdog_instance(path=DATA_CSV_PATH):
-
-    event_handler = FileMonitor()
-    observer = Observer()
-    observer.schedule(event_handler, path, recursive=True)
-    observer.start()
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        observer.stop()
-
-    observer.join()
+socketio = SocketIO()
 
 
 def parse_data(path=DATA_CSV_PATH):
@@ -162,6 +132,21 @@ def parse_data(path=DATA_CSV_PATH):
         }
 
 
+def create_data_watchdog_instance(path=DATA_CSV_FOLDER_PATH):
+
+    event_handler = FileMonitor()
+    observer = Observer()
+    observer.schedule(event_handler, path, recursive=True)
+    observer.start()
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        observer.stop()
+
+    observer.join()
+
+
 def update_data_POST(data, url=BACKEND_ENDPOINT + "/data"):
     headers = {"Content-type": "application/json", "Accept": "text/plain"}
     # serilization
@@ -186,8 +171,42 @@ def preprocess_data(row):
     return row
 
 
-class FileMonitor(FileSystemEventHandler):
+class FileMonitor(PatternMatchingEventHandler):
     def on_modified(self, event):
+        patterns = ["*/data.csv"]
         super(FileMonitor, self).on_modified(event)
         data = parse_data()
         update_data_POST(data)
+
+
+def create_backend_instance(config=Config):
+    app = Flask(__name__)
+    app.config.from_object(Config)
+    DB = json.dumps(parse_data())
+
+    # socketio instantiation
+    socketio.init_app(app)
+    # enable CORS
+    CORS(app)
+
+    # http server
+    @app.before_request
+    def before_request():
+        if 'db' not in g:
+            g.db = DB
+            print("init DB...")
+
+    @app.route("/data", methods=["GET", "POST"])
+    def data():
+        """ get and post all data """
+        if request.method == "GET":
+            return jsonify(g.db)
+        if request.method == "POST":
+            db = request.get_json()
+            try:
+                socketio.emit("updateData", db, broadcast=True)
+                return json.dumps({'success':True}), 201, {'ContentType':'application/json'}
+            except:
+                return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
+    return app

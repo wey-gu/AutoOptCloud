@@ -1,0 +1,6 @@
+numpy
+flask
+flask_cors
+flask_socketio
+watchdog
+python-dotenv

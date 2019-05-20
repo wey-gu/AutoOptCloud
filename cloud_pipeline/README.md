@@ -159,7 +159,7 @@ data_collector.benchmark
 
 ```bash
 $ pwd
-~/ML-opt-Cloud
+~/ML-opt-Cloud/
 
 $ ./build.sh
 

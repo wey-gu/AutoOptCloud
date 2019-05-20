@@ -202,9 +202,9 @@ def create_backend_instance(config=Config):
         if request.method == "GET":
             return jsonify(g.db)
         if request.method == "POST":
-            db = request.get_json()
+            DB = request.get_json()
             try:
-                socketio.emit("updateData", db, broadcast=True)
+                socketio.emit("updateData", DB, broadcast=True)
                 return json.dumps({'success':True}), 201, {'ContentType':'application/json'}
             except:
                 return json.dumps({'success':True}), 200, {'ContentType':'application/json'}

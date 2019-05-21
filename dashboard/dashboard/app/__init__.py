@@ -22,8 +22,62 @@ NORMALIZATION = {
     "fileio": lambda x: np.divide(float(x), 10),
     "mysql": lambda x: np.divide(float(x), 10),
     "iperf3": lambda x: np.multiply(float(x), 100),
-    "cpu": lambda x: np.divide(float(x), 10),
+    "cpu": lambda x: np.divide(float(x), 30),
     "benchmark": lambda x: np.divide(np.log(float(x)), 5)
+}
+
+HEADER_COLOR = {
+    "rabbitmq": "green",
+    "fileio": "yellow",
+    "mysql": "orange",
+    "iperf3": "red",
+    "cpu": "teal",
+    "benchmark": "blue",
+    "w_ram": "red",
+    "w_disk": "yellow",
+    "w_user_p": "pink",
+    "w_iowait_p": "blue",
+    "w_frequency": "cyan",
+    "w_idle_p": "green",
+    "w_cpu_p": "orange",
+    "w_kernel_p": "indigo",
+}
+
+LINE_COLOR = {
+    "blue": "#2196F3",
+    "green": "#00E676",
+    "orange": "#FFAB40",
+    "red": "#FF1744",
+    "pink": "#F06292",
+    "indigo": "#3D5AFE",
+    "yellow": "#FFEA00",
+    "teal": "#1DE9B6",
+    "cyan": "#00838F"
+}
+
+
+BACKGRD_COLOR = {
+    "blue": "#E3F2FD",
+    "green": "#E8F5E9",
+    "orange": "#FFF3E0",
+    "red": "#FFCDD2",
+    "pink": "#FCE4EC",
+    "indigo": "#E8EAF6",
+    "yellow": "#FFFDE7",
+    "teal": "#E0F2F1",
+    "cyan": "#E0F7FA"
+}
+
+BACKGRD_TRANS_COLOR = {
+    "blue": "rgba(33, 150, 243, 0.1)",
+    "green": "rgba(76, 175, 80, 0.1)",
+    "orange": "rgba(255, 152, 0, 0.1)",
+    "red": "rgba(244, 67, 54, 0.1)",
+    "pink": "rgba(233, 30, 99, 0.1)",
+    "indigo": "rgba(63, 81, 181, 0.1)",
+    "yellow": "rgba(255, 235, 59, 0.1)",
+    "teal": "rgba(0, 150, 136, 0.1)",
+    "cyan": "rgba(0, 96, 100, 0.1)"
 }
 
 socketio = SocketIO()
@@ -33,9 +87,9 @@ def parse_data(path=DATA_CSV_PATH):
     # dict_datas = list()
     handsontable_datas = list()
     charjs_datas = {
-        "peformance" : {},
-        "weighers" : {}
-        }
+        "peformance": {},
+        "weighers": {}
+    }
     with open(path) as csvfile:
         reader = csv.DictReader(csvfile)
         headers = reader.fieldnames
@@ -60,14 +114,13 @@ def parse_data(path=DATA_CSV_PATH):
     data_2d_T = np.array(handsontable_datas[1:]).T
 
     # id as labels of the chartJS charts
-    id_iterations = data_2d_T[0].tolist() # for serilizaiton
+    id_iterations = data_2d_T[0].tolist()  # for serilizaiton
 
     # benchmark, rabbitmq, fileio, mysql, iperf3, cpu
     perf_index = np.s_[1, 3:8]
     perf_headers = [headers[perf_index[0]]] + headers[perf_index[1]]
-    perf_data = [data_2d_T[perf_index[0]].T.tolist()] + [ a for a in
-        data_2d_T[perf_index[1]].tolist()
-        ]
+    perf_data = [data_2d_T[perf_index[0]].T.tolist()] + \
+        [a for a in data_2d_T[perf_index[1]].tolist()]
 
     # w_ram, w_disk, w_user_p, w_iowait_p, w_frequency
     # w_idle_p, w_cpu_p, w_kernel_p
@@ -112,7 +165,12 @@ def parse_data(path=DATA_CSV_PATH):
     charjs_datas["peformance"] = {
         "labels": id_iterations,
         "datasets": [
-            {"label" : header, "data": perf_data[i]}
+            {
+                "label": header, "data": perf_data[i], "borderWidth": 1,
+                "pointBackgroundColor": "white", "pointBorderColor": "white",
+                "borderColor": LINE_COLOR[HEADER_COLOR[header]],
+                "backgroundColor": BACKGRD_TRANS_COLOR[HEADER_COLOR[header]]
+            }
             for i, header in enumerate(perf_headers)
         ]
     }
@@ -120,16 +178,21 @@ def parse_data(path=DATA_CSV_PATH):
     charjs_datas["weighers"] = {
         "labels": id_iterations,
         "datasets": [
-            {"label" : header, "data": weighers_data[i]}
+            {
+                "label": header.split("w_")[1], "data": weighers_data[i], "borderWidth": 1,
+                "pointBackgroundColor": "white", "pointBorderColor": "white",
+                "borderColor": LINE_COLOR[HEADER_COLOR[header]],
+                "backgroundColor": BACKGRD_TRANS_COLOR[HEADER_COLOR[header]]
+            }
             for i, header in enumerate(weighers_headers)
         ]
     }
 
     return {
         # "dict_datas" : dict_datas,
-        "handsontable_datas" : handsontable_datas,
-        "charjs_datas" : charjs_datas,
-        }
+        "handsontable_datas": handsontable_datas,
+        "charjs_datas": charjs_datas,
+    }
 
 
 def create_data_watchdog_instance(path=DATA_CSV_FOLDER_PATH):
@@ -182,7 +245,7 @@ class FileMonitor(PatternMatchingEventHandler):
 def create_backend_instance(config=Config):
     app = Flask(__name__)
     app.config.from_object(Config)
-    DB = json.dumps(parse_data())
+    db = json.dumps(parse_data())
 
     # socketio instantiation
     socketio.init_app(app)
@@ -193,8 +256,7 @@ def create_backend_instance(config=Config):
     @app.before_request
     def before_request():
         if 'db' not in g:
-            g.db = DB
-            print("init DB...")
+            g.db = db
 
     @app.route("/data", methods=["GET", "POST"])
     def data():
@@ -202,11 +264,11 @@ def create_backend_instance(config=Config):
         if request.method == "GET":
             return jsonify(g.db)
         if request.method == "POST":
-            DB = request.get_json()
+            db = request.get_json()
             try:
-                socketio.emit("updateData", DB, broadcast=True)
-                return json.dumps({'success':True}), 201, {'ContentType':'application/json'}
-            except:
-                return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+                socketio.emit("updateData", db, broadcast=True)
+                return json.dumps({'success': True}), 201, {'ContentType': 'application/json'}
+            except:  # NOQA
+                return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
     return app

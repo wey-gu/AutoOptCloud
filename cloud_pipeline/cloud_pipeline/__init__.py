@@ -10,5 +10,5 @@ class CloudPipeline(CloudPipelineBase):
     """
     cloud pipeline
     """
-    def __init__(self):
-        CloudPipelineBase.__init__(self)
+    def __init__(self, fake=False):
+        CloudPipelineBase.__init__(self, fake=fake)

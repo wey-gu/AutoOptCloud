@@ -258,7 +258,6 @@ class FileMonitor(PatternMatchingEventHandler):
 def create_backend_instance(config=Config):
     app = Flask(__name__)
     app.config.from_object(Config)
-    db = json.dumps(parse_data())
 
     # socketio instantiation
     socketio.init_app(app)
@@ -266,16 +265,20 @@ def create_backend_instance(config=Config):
     CORS(app)
 
     # http server
-    @app.before_request
-    def before_request():
-        if 'db' not in g:
-            g.db = db
+    # @app.before_request
+    # def before_request():
+    #     if 'db' not in g:
+    #         g.db = db
 
     @app.route("/data", methods=["GET", "POST"])
     def data():
         """ get and post all data """
         if request.method == "GET":
-            return jsonify(g.db)
+            # I know this is ugly, but we are short of time and
+            # it's not going to be served for high concurrent
+            # queries case :-), just do it the dirty way :-p
+            db = json.dumps(parse_data())
+            return jsonify(db)
         if request.method == "POST":
             db = request.get_json()
             try:

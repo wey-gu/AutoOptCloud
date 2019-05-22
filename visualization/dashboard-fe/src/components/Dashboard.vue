@@ -1,79 +1,89 @@
 <template>
-  <v-container>
-    <v-layout>
-      <v-flex xs12 md2>
-        <v-container>
-          <v-card class="text-xs-center hover">
-            <v-card-text
-              class="text-xs-center display-2 font-weight-regular"
-            >{{ chart_data_perf.labels.length }}</v-card-text>
-            <v-card-text class="text-xs-center body-1 grey--text font-weight-light">iterations</v-card-text>
-          </v-card>
-        </v-container>
+  <!-- <v-container> -->
+  <v-layout>
+    <v-flex xs12 lg2 xl1>
+      <v-container>
+        <v-card class="text-xs-center hover">
+          <v-card-text
+            class="text-xs-center display-2 font-weight-regular"
+          >{{ chart_data_perf.labels.length }}</v-card-text>
+          <v-card-text class="text-xs-center body-1 grey--text font-weight-light">Iterations</v-card-text>
+        </v-card>
+      </v-container>
 
-        <!-- <v-container>
-          <v-card class="text-xs-center hover">
-            <v-card-text class="text-xs-center display-2 font-weight-regular">{{ max_iteration }}</v-card-text>
-            <v-card-text class="text-xs-center body-1 grey--text font-weight-light">max benchmark</v-card-text>
-          </v-card>
-        </v-container>
+      <v-container>
+        <v-card class="text-xs-center hover">
+          <v-tooltip bottom color="grey lighten-5">
+            <template v-slot:activator="{ on }">
+              <v-card-text
+                v-on="on"
+                class="text-xs-center font-weight-regular text-truncate"
+              >{{ max_benchmark }}</v-card-text>
+            </template>
+            <span class="grey--text ont-weight-light">
+              {{ max_benchmark }}
+              <br>
+              in Iteration: {{ max_benchmark_index }}
+            </span>
+          </v-tooltip>
+          <v-card-text class="text-xs-center body-1 grey--text font-weight-light">Max Bench</v-card-text>
+        </v-card>
+      </v-container>
 
-        <v-container>
-          <v-card class="text-xs-center hover">
-            <v-card-text
-              class="text-xs-center display-2 font-weight-regular"
-            >{{ max_iteration_index }}</v-card-text>
-            <v-card-text
-              class="text-xs-center body-1 grey--text font-weight-light"
-            >max benchmark iteration</v-card-text>
-          </v-card>
-        </v-container>-->
-      </v-flex>
-      <v-flex xs12 md12>
-        <v-container>
-          <v-card class="dark elevation-5" color="blue-grey darken-4">
-            <v-card-text primary-title>
-              <div class="chart-title">
-                <h2
-                  class="text-xs-center grey--text text--lighten-1"
-                >Performance impacted per iteration</h2>
-              </div>
-            </v-card-text>
-            <v-container>
-              <performance-chart
-                :chart-data="this.chart_data_perf"
-                :chart-option="{maintainAspectRatio:false}"
-                :height="160"
-              ></performance-chart>
-            </v-container>
-          </v-card>
-        </v-container>
+      <v-container>
+        <v-card class="text-xs-center hover">
+          <v-card-text
+            class="text-xs-center display-2 font-weight-regular"
+          >{{ max_benchmark_index }}</v-card-text>
+          <v-card-text class="text-xs-center body-1 grey--text font-weight-light">Max Iteration</v-card-text>
+        </v-card>
+      </v-container>
+    </v-flex>
+    <v-flex xs12 md10 xl11>
+      <v-container>
+        <v-card class="dark elevation-5" color="blue-grey darken-4">
+          <v-card-text primary-title>
+            <div class="chart-title">
+              <h2
+                class="text-xs-center grey--text text--lighten-1"
+              >Performance impacted per iteration</h2>
+            </div>
+          </v-card-text>
+          <v-container>
+            <performance-chart
+              :chart-data="this.chart_data_perf"
+              :chart-option="{maintainAspectRatio:false}"
+              :height="160"
+            ></performance-chart>
+          </v-container>
+        </v-card>
+      </v-container>
 
-        <v-container>
-          <v-card class="dark elevation-5" color="blue-grey darken-4">
-            <v-card-text primary-title>
-              <div class="chart-title">
-                <h2 class="text-xs-center grey--text text--lighten-1">Tuned weighers per iteration</h2>
-              </div>
-            </v-card-text>
-            <v-container>
-              <weigher-chart
-                :chart-data="this.chart_data_w"
-                :chart-option="{maintainAspectRatio:false}"
-                :height="160"
-              ></weigher-chart>
-            </v-container>
-          </v-card>
-        </v-container>
-      </v-flex>
-    </v-layout>
-  </v-container>
+      <v-container>
+        <v-card class="dark elevation-5" color="blue-grey darken-4">
+          <v-card-text primary-title>
+            <div class="chart-title">
+              <h2 class="text-xs-center grey--text text--lighten-1">Tuned weighers per iteration</h2>
+            </div>
+          </v-card-text>
+          <v-container>
+            <weigher-chart
+              :chart-data="this.chart_data_w"
+              :chart-option="{maintainAspectRatio:false}"
+              :height="160"
+            ></weigher-chart>
+          </v-container>
+        </v-card>
+      </v-container>
+    </v-flex>
+  </v-layout>
+  <!-- </v-container> -->
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import PerformanceChart from "./PerformanceChart.vue";
-import WeigherChart from "./WeigherChart.vue";
+import PerformanceChart from "./Chart.vue";
+import WeigherChart from "./Chart.vue";
 
 export default {
   data: () => ({
@@ -141,9 +151,9 @@ export default {
   computed: {
     ...mapGetters([
       "chart_data_perf",
-      "chart_data_w"
-      // "max_iteration",
-      // "max_iteration_index"
+      "chart_data_w",
+      "max_benchmark",
+      "max_benchmark_index"
     ])
   }
 };

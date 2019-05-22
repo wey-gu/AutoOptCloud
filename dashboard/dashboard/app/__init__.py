@@ -84,7 +84,7 @@ socketio = SocketIO()
 
 
 def parse_data(path=DATA_CSV_PATH):
-    # dict_datas = list()
+    dict_datas = list()
     handsontable_datas = list()
     charjs_datas = {
         "peformance": {},
@@ -96,20 +96,24 @@ def parse_data(path=DATA_CSV_PATH):
         handsontable_datas.append(headers)
         for row in reader:
             _row = preprocess_data(row)
-            # dict_datas.append(_row)
+            dict_datas.append(_row)
             handsontable_datas.append(list(_row.values()))
+    headers_vuetify = [{
+        "text": header,
+        "value": header,
+        "width": "6.2%",
+    } for header in headers]
+    # """
+    # handsontableJS
 
-    """
-    handsontableJS
+    # ref: https://github.com/handsontable/vue-handsontable-official
 
-    ref: https://github.com/handsontable/vue-handsontable-official
-
-    example:
-    ['Year', 'Tesla', 'Mercedes', 'Toyota', 'Volvo'],
-    ['2019', 10, 11, 12, 13],
-    ['2020', 20, 11, 14, 13],
-    ['2021', 30, 15, 12, 13]
-    """
+    # example:
+    # ['Year', 'Tesla', 'Mercedes', 'Toyota', 'Volvo'],
+    # ['2019', 10, 11, 12, 13],
+    # ['2020', 20, 11, 14, 13],
+    # ['2021', 30, 15, 12, 13]
+    # """
     # use np for better transposing performance
     data_2d_T = np.array(handsontable_datas[1:]).T
 
@@ -188,10 +192,19 @@ def parse_data(path=DATA_CSV_PATH):
         ]
     }
 
+    max_benchmark = max(perf_data[0])
+    max_benchmark_index = id_iterations[(
+        [index for index, bench in enumerate(
+            perf_data[0]) if bench == max_benchmark][0]
+    )]
+
     return {
-        # "dict_datas" : dict_datas,
-        "handsontable_datas": handsontable_datas,
+        "table_datas": dict_datas,
+        # "handsontable_datas": handsontable_datas,
         "charjs_datas": charjs_datas,
+        "max_benchmark": max_benchmark,
+        "max_benchmark_index": max_benchmark_index,
+        "headers": headers_vuetify,
     }
 
 

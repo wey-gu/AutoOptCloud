@@ -63,16 +63,28 @@ jupyter notebook --ip <public_ip> --port 8080 --allow-root
 ```bash
 apt-get install -y --force-yes docker.io cgroup-bin
 
-docker load < gpbo_ubuntu.tar
+docker load < opt-cloud_dockerImage.tar
+docker load < opt-cloud_dockerImage_py2.tar
+
+$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+<none>              <none>              8152b07f5c7f        16 minutes ago      1.101 GB
+<none>              <none>              836a0d092e24        18 hours ago        1.155 GB
 
 docker run -v /var/lib/cloud_pipeline:/var/lib/cloud_pipeline \
   -v /etc/localtime:/etc/localtime \
   -v /path/to/certs/OS-ca.crt:/path/to/certs/OS-ca.crt \
   --net=host -d -it --name cloud-opt 836a0d092e24
 
+docker run -v /var/lib/cloud_pipeline:/var/lib/cloud_pipeline \
+  -v /etc/localtime:/etc/localtime \
+  -v /path/to/certs/OS-ca.crt:/path/to/certs/OS-ca.crt \
+  --net=host -d -it --name cloud-opt_py2 8152b07f5c7f
 
 screen -S jupyter
-docker exec -it cloud-opt bash
+docker exec -it cloud-opt_py2 bash
+mkdir -p ~/.jupyter
+ln -s /var/lib/cloud_pipeline cloud_pipeline
 jupyter notebook --ip 192.168.0.32 --port 8080 --allow-root
 
 ```

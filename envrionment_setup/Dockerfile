@@ -8,12 +8,15 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     python-tk git gfortran libopenblas-dev liblapack-dev liblapacke-dev \
-    python3-pip python3-dev python3-setuptools unzip \
+    python-pip python-dev python-setuptools unzip \
     && rm -rf /var/lib/apt/lists/*
-RUN python3 -m pip install --no-cache-dir --upgrade pip && \
-    python3 -m pip install --no-cache-dir python-heatclient python-keystoneclient ansible numpy polling scikit-learn matplotlib jupyter \
-    flask flask_cors flask_socketio python-dotenv paramz scipy GPy && \
-    python3 -m pip install --no-cache-dir git+https://github.com/markm541374/gpbo@master && \
-    python3 -m pip install --no-cache-dir git+https://github.com/fmfn/BayesianOptimization@master && \
-    python3 -m pip install --no-cache-dir git+https://github.com/SheffieldML/GPyOpt.git@master && \
+RUN python -m pip install --no-cache-dir --upgrade pip && \
+    python -m pip install --no-cache-dir python-heatclient python-keystoneclient ansible numpy polling scikit-learn matplotlib jupyter \
+    flask flask_cors flask_socketio python-dotenv paramz scipy && rm -fr /tmp/*
+
+RUN python -m pip install GPy && \
+    python -m pip install --no-cache-dir git+https://github.com/markm541374/gpbo@master && \
+    python -m pip install --no-cache-dir git+https://github.com/fmfn/BayesianOptimization@master && \
+    python -m pip install --no-cache-dir git+https://github.com/SheffieldML/GPyOpt.git@master && \
     rm -fr /tmp/*
+

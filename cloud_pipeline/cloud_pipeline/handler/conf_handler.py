@@ -43,7 +43,10 @@ class ConfHandler():
     def __init__(self, arg_dict):
         self.arg_validator(arg_dict)
         arg = {key: str(arg_dict[key]) for key in arg_dict}
-        self.apply_command = self._build_command(arg)
+        try:
+            self.apply_command = self._build_command(arg)
+        except FileNotFoundError as e:
+            _.error(str(e))
 
     def apply(self):
         return self._issue_command(self.apply_command)

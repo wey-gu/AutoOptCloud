@@ -8,13 +8,14 @@ from subprocess import check_output
 
 class PostInstallCommand(install):
     """Post-installation for installation mode."""
+
     def run(self):
         if sys.platform in ["linux", "linux2"]:
             from cloud_pipeline.config import LNAV_PATH
             cloud_pipeline = sys.modules["cloud_pipeline"]
             LNAV_ZIP_PATH = os.path.dirname(
                 inspect.getfile(cloud_pipeline)
-                ) + "/" + LNAV_PATH
+            ) + "/" + LNAV_PATH
             check_output("/bin/mkdir -p /opt/lnav-0.8.5/".split())
             check_output("/usr/bin/apt-get install unzip".split())
             check_output(["unzip", "-o", LNAV_ZIP_PATH, "-d", "/opt/"])
@@ -34,6 +35,7 @@ setup(
     author_email='littlewey@gmail.com',
     packages=find_packages(),
     zip_safe=False,
+    include_package_data=True,
     install_requires=[
         "python-heatclient",
         "python-keystoneclient",
@@ -47,4 +49,4 @@ setup(
             'cloudp = cloud_pipeline.utils.cli:main'
         ]
     }
-    )
+)

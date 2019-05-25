@@ -13,7 +13,7 @@ RUN apt-get update && \
 RUN python3 -m pip install --no-cache-dir --upgrade pip && \
     python3 -m pip install --no-cache-dir python-heatclient python-keystoneclient ansible numpy polling scikit-learn matplotlib jupyter \
     flask flask_cors flask_socketio python-dotenv paramz scipy GPy && \
-    python3 -m pip install --no-cache-dir git+https://github.com/markm541374/gpbo@master && \
+    python3 -m pip install --no-cache-dir git+https://github.com/littlewey/gpbo@master && \
     python3 -m pip install --no-cache-dir git+https://github.com/fmfn/BayesianOptimization@master && \
-    python3 -m pip install --no-cache-dir git+https://github.com/littlewey/GPyOpt.git@master && \
+    python3 -m pip install --no-cache-dir git+https://github.com/SheffieldML/GPyOpt.git@master && \
     rm -fr /tmp/*

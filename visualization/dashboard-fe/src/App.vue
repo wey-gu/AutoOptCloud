@@ -8,26 +8,6 @@
       </v-toolbar-title>
       <v-spacer></v-spacer>
     </v-toolbar>
-    <!-- <v-navigation-drawer fixed v-model="drawer" app temporary>
-      <v-toolbar dark fixed app clipped-right>
-        <v-toolbar-title class="headline">
-          <v-icon>settings</v-icon>
-          <span class="font-weight-light">&nbsp;&nbsp;Configurations</span>
-        </v-toolbar-title>
-        <v-spacer></v-spacer>
-      </v-toolbar>
-      <v-divider></v-divider>
-      <v-list>
-        <v-list>
-          <v-list-tile-action>
-            <v-icon>show_chart</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>chart</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list>
-      </v-list>
-    </v-navigation-drawer>-->
 
     <v-navigation-drawer v-model="drawer" absolute temporary>
       <v-list class="pa-1">
@@ -37,7 +17,7 @@
           </v-list-tile-avatar>
 
           <v-list-tile-content>
-            <v-list-tile-title>Configurations</v-list-tile-title>
+            <v-list-tile-title class="font-weight-light">UltraCloud Opt Toolchain</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -51,7 +31,7 @@
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-btn to="/" flat>
-              <v-list-tile-title>Dashboard</v-list-tile-title>
+              <v-list-tile-title class="font-weight-light">Dashboard</v-list-tile-title>
             </v-btn>
           </v-list-tile-content>
         </v-list-tile>
@@ -62,7 +42,7 @@
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-btn to="/datatable" flat>
-              <v-list-tile-title>Data Sheet</v-list-tile-title>
+              <v-list-tile-title class="font-weight-light">Data Sheet</v-list-tile-title>
             </v-btn>
           </v-list-tile-content>
         </v-list-tile>

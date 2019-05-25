@@ -1,7 +1,7 @@
 <template>
   <!-- <v-container> -->
   <v-layout>
-    <v-flex xs12 lg2 xl1>
+    <v-flex xl1>
       <v-container>
         <v-card class="text-xs-center hover">
           <v-card-text
@@ -39,7 +39,7 @@
         </v-card>
       </v-container>
     </v-flex>
-    <v-flex xs12 md10 xl11>
+    <v-flex md11 xl12>
       <v-container>
         <v-card class="dark elevation-5" color="blue-grey darken-4">
           <v-card-text primary-title>

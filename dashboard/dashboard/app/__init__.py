@@ -82,6 +82,15 @@ BACKGRD_TRANS_COLOR = {
 
 socketio = SocketIO()
 
+# it turned out before py36, DictReader returned
+# dict instead of OrderDict :(
+if (sys.version_info[0] + 0.1 * sys.version_info[1]) < 3.6:
+    def orderred_values(row, headers):
+        return [row[key] for key in headers]
+else:
+    def orderred_values(row, headers):
+        return list(row.values())
+
 
 def parse_data(path=DATA_CSV_PATH):
     dict_datas = list()
@@ -97,9 +106,9 @@ def parse_data(path=DATA_CSV_PATH):
         for row in reader:
             _row = preprocess_data(row)
             dict_datas.append(_row)
-            handsontable_datas.append(list(_row.values()))
+            handsontable_datas.append(orderred_values(_row, headers))
     headers_vuetify = [{
-        "text": header,
+        "text": header.replace("w_", ""),
         "value": header,
         "width": "6.2%",
     } for header in headers]
@@ -183,7 +192,7 @@ def parse_data(path=DATA_CSV_PATH):
         "labels": id_iterations,
         "datasets": [
             {
-                "label": header.split("w_")[1], "data": weighers_data[i], "borderWidth": 1,
+                "label": header.replace("w_", ""), "data": weighers_data[i], "borderWidth": 1,
                 "pointBackgroundColor": "white", "pointBorderColor": "white",
                 "borderColor": LINE_COLOR[HEADER_COLOR[header]],
                 "backgroundColor": BACKGRD_TRANS_COLOR[HEADER_COLOR[header]]

@@ -28,10 +28,10 @@ class Heatclient:
     @staticmethod
     def _get_resource_path(path):
         return os.path.join(
-                os.path.dirname(__file__),
-                "..",
-                path
-                )
+            os.path.dirname(__file__),
+            "..",
+            path
+        )
 
     def stack_create(self, hc, HOT_path, env_path, stack_name):
         hot_path = self._get_resource_path(HOT_path)
@@ -40,13 +40,13 @@ class Heatclient:
             environment = yaml.load(envFile)
 
         files, template = template_utils.process_template_path(
-                hot_path)
+            hot_path)
         stack = hc.stacks.create(
             stack_name=stack_name,
             template=template,
             environment=environment,
             files=files
-            )
+        )
 
         return stack
 
@@ -65,8 +65,8 @@ class Heatclient:
             # heatclient.exc.InvalidEndpoint: Prohibited endpoint redirect
             # here we use client.stacks.list then filter it :(
             stackList = list(hc.client.stacks.list())
-            stack = filter(
-                lambda stack: stack.id == stack_id, stackList)[0]
+            stack = list(filter(
+                lambda stack: stack.id == stack_id, stackList))[0]
         status_query = stack.stack_status
         return status_query == status
 
@@ -85,7 +85,7 @@ class Heatclient:
     @staticmethod
     def stack_filter(heatclient, name):
         stackList = list(heatclient.client.stacks.list())
-        return filter(lambda stack: stack.stack_name == name, stackList)
+        return list(filter(lambda stack: stack.stack_name == name, stackList))
 
     def stack_existed(self, stack_name, heatclient):
         f = self.stack_filter(heatclient, stack_name)

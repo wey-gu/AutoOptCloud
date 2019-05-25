@@ -15,19 +15,21 @@ class Keystoneclient:
             password=OS_PASSWORD,
             tenant_name=OS_TENANT_NAME,
             ca_file=OS_CACERT
-            )
+        )
         self.token = self.keystone.auth_token
         self.services = self.keystone.services.list()
         self.endpoints = self.keystone.endpoints.list()
 
     def service_filter(self, service_type):
-        return filter(lambda srv: srv.type == service_type, self.services)
+        # use list() to support py2 and py3
+        return list(filter(lambda srv: srv.type == service_type, self.services))
 
     def _get_service(self, service_type):
         return self.service_filter(service_type)[0]
 
     def endpoint_filter(self, service_id):
-        return filter(lambda srv: srv.service_id == service_id, self.endpoints)
+        # use list() to support py2 and py3
+        return list(filter(lambda srv: srv.service_id == service_id, self.endpoints))
 
     def get_endpoint(self, service_type):
         service_id = self._get_service(service_type).id

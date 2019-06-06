@@ -56,6 +56,17 @@ jupyter notebook --ip <public_ip> --port 8080 --allow-root
 ^-ad
 ```
 
+> start frontail
+
+```bash
+docker run -d -it -v /var/lib/cloud_pipeline:/var/lib/cloud_pipeline -v /var/log:/log e4d2fa40e966 /var/lib/cloud_pipeline/log/*.log --host 127.0.0.1 --port 9001 --net=host --name frontail
+
+docker exec -it 565270cacde7 bash
+
+
+frontail --ui-highlight  --theme dark /var/lib/cloud_pipeline/log/*.log --host 127.0.0.1 --port 9001
+```
+
 
 
 ## Docker
@@ -74,11 +85,13 @@ REPOSITORY          TAG                 IMAGE ID            CREATED             
 docker run -v /var/lib/cloud_pipeline:/var/lib/cloud_pipeline \
   -v /etc/localtime:/etc/localtime \
   -v /path/to/certs/OS-ca.crt:/path/to/certs/OS-ca.crt \
+  -v /root/openrc:/root/openrc \
   --net=host -d -it --name cloud-opt 836a0d092e24
 
 docker run -v /var/lib/cloud_pipeline:/var/lib/cloud_pipeline \
   -v /etc/localtime:/etc/localtime \
   -v /path/to/certs/OS-ca.crt:/path/to/certs/OS-ca.crt \
+  -v /root/openrc:/root/openrc \
   --net=host -d -it --name cloud-opt_py2 8152b07f5c7f
 
 screen -S jupyter
@@ -86,6 +99,26 @@ docker exec -it cloud-opt_py2 bash
 mkdir -p ~/.jupyter
 ln -s /var/lib/cloud_pipeline cloud_pipeline
 jupyter notebook --ip 192.168.0.32 --port 8080 --allow-root
+
+```
+
+
+
+### k8s
+
+> offline guide
+>
+> <https://github.com/kubernetes/minikube/blob/master/docs/offline.md>
+>
+> build `minikube.iso`
+>
+> <https://github.com/kubernetes/minikube/blob/master/docs/contributors/minikube_iso.md>
+
+download needed cahced files
+
+```bash
+# docker images
+
 
 ```
 

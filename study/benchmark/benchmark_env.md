@@ -1,14 +1,8 @@
 [TOC]
 
-
-
 ## Benchmark definitions
 
-
-
 >  This document described benchmark definitions. The `LeTex` could be ugly as it's trying to fit format on both gitlab and github 😭...
-
-
 
 ### rabbitmq benchmark
 
@@ -39,9 +33,7 @@ id: test-085859-070, receiving rate avg: 17 msg/s
 
 > definition
 
-Here we use `receiving rate avg` **devision** by  the mean of `95th consumer latency` in `ms ` : $`\frac {\sum_{95th}l } {n \times 1000}`$ for this benchmark definition: 
-
-$$B_{rabbitmq} = \frac {R}{L}  $$ .
+Here we use `receiving rate avg` **devision** by  the mean of `95th consumer latency` in `ms ` : $\frac {\sum_{95th}l } {n \times 1000}$ for this benchmark definition:  $$B_{rabbitmq} = \frac {R}{L}  $$ .
 
 ```math
 B_{rabbitmq} = \frac {R}{L} 
@@ -51,15 +43,15 @@ B_{rabbitmq} = \frac {R}{L}
 
 >note: 
 
-$`B`$ : `Benchmark`
+$B$ : `Benchmark`
 
-$`R`$ : `receiving rate avg`
+$R$ : `receiving rate avg`
 
-$`l`$:  `consumer latency`
+$l$:  `consumer latency`
 
-$`L`$:   `95th consumer latency` in `ms` :
+$L$:   `95th consumer latency` in `ms` :  $ \frac {\sum_{95th}l } {n \times 1000} $
 
- $` \frac {\sum_{95th}l } {n \times 1000} `$
+
 
 ```math
  \frac {\sum_{95th}l } {n \times 1000}
@@ -124,21 +116,19 @@ Threads fairness:
 
 > definition
 
-Here we use `product of r/w Throughput.` in $` (MiB/s)^2`​$  **devision** by  the mean of `95th percentile latency` in `ms ` $` L` ​$ for this benchmark definition: 
-
-$$B_{fileio} = \frac {R}{L}  ​$$ .
+Here we use `product of r/w Throughput.` in $ (MiB/s)^2$  **devision** by  the mean of `95th percentile latency` in `ms ` $L$ for this benchmark definition:  $$B_{fileio} = \frac {T}{L}  $$ .
 
 ```math
-B_{fileio} = \frac {R}{L} 
+B_{fileio} = \frac {T}{L} 
 ```
 
 
 
 > note: 
 
-$`B`​$ : `Benchmark`
+$B$ : `Benchmark`
 
-$`R`​$ : `product of r/w Throughput.` :  $`{r \times w} `​$
+$T$ : `product of r/w Throughput.` :  ${r \times w} $
 
 ```math
 {r \times w}
@@ -146,7 +136,7 @@ $`R`​$ : `product of r/w Throughput.` :  $`{r \times w} `​$
 
 
 
-$`L`​$:  `95th percentile latency`
+$L$:  `95th percentile latency`
 
 ### mysql benchmark
 
@@ -227,9 +217,7 @@ Threads fairness:
 
 > definition
 
-Here we use `queries per sec.` **devision** by  the mean of `95th percentile latency` in `ms ` $`L`$ for this benchmark definition: 
-
-$$B_{mysql} = \frac {R}{L}  $$ .
+Here we use `queries per sec.` **devision** by  the mean of `95th percentile latency` in `ms ` $L$ for this benchmark definition:  $$B_{mysql} = \frac {R}{L}  $$ .
 
 ```math
 B_{mysql} = \frac {R}{L} 
@@ -239,11 +227,11 @@ B_{mysql} = \frac {R}{L}
 
 > note: 
 
-$`B`​$ : `Benchmark`
+$B$ : `Benchmark`
 
-$`R`​$ : `transactions per sec.`
+$R$ : `transactions per sec.`
 
-$`L`​$:  `95th percentile latency`
+$L$:  `95th percentile latency`
 
 ### cpu benchmark
 
@@ -283,7 +271,7 @@ Threads fairness:
 
 > definition
 
-Here we use `events per second.` **devision** by  the mean of `95th percentile latency` in `ms ` $`L`$ for this benchmark definition: 
+Here we use `events per second.` **devision** by  the mean of `95th percentile latency` in `ms ` $L$ for this benchmark definition: 
 
 $$B_{cpu} = \frac {R}{L}  $$ .
 
@@ -295,11 +283,11 @@ B_{cpu} = \frac {R}{L}
 
 > note: 
 
-$`B`​$ : `Benchmark`
+$B$ : `Benchmark`
 
-$`R`​$ : `transactions per sec.`
+$R$ : `transactions per sec.`
 
-$`L`​$:  `95th percentile latency`
+$L$:  `95th percentile latency`
 
 ### `iperf3` benchmark
 
@@ -332,7 +320,7 @@ What we care here:
 
 Here we use `Bandwidth` in `Mbits/sec.`  **devision** by  the mean of `Retr`  for this benchmark definition: 
 
-$$B_{iperf3} = \frac {b}{R}  ​$$ .
+$$B_{iperf3} = \frac {b}{R}  $$ .
 
 ```math
 B_{iperf3} = \frac {b}{R}  
@@ -342,11 +330,11 @@ B_{iperf3} = \frac {b}{R}
 
 > note: 
 
-$`B`$ : `Benchmark`
+$B$ : `Benchmark`
 
-$`b`​$ : `Bandwidth`
+$b$ : `Bandwidth`
 
-$`R`$:  `Retr`
+$R$:  `Retr`
 
 ### 
 

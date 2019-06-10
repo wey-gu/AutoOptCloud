@@ -11,22 +11,27 @@ class PostInstallCommand(install):
 
     def run(self):
         if sys.platform in ["linux", "linux2"]:
-            from cloud_pipeline.config import LNAV_PATH
+            from cloud_pipeline.config import LNAV_PATH, SCRIPT_PATH, WORKING_DIR
             cloud_pipeline = sys.modules["cloud_pipeline"]
             LNAV_ZIP_PATH = os.path.dirname(
                 inspect.getfile(cloud_pipeline)
             ) + "/" + LNAV_PATH
+            CONF_WATCHDOG_PATH = os.path.dirname(
+                inspect.getfile(cloud_pipeline)
+            ) + "/" + SCRIPT_PATH + "conf_watchdog.sh"
             check_output("/bin/mkdir -p /opt/lnav-0.8.5/".split())
             check_output("/usr/bin/apt-get install unzip".split())
             check_output(["unzip", "-o", LNAV_ZIP_PATH, "-d", "/opt/"])
             check_output(
                 "ln -sf /opt/lnav-0.8.5/lnav /usr/sbin/lnav", shell=True)
+            check_output(
+                ["cp", CONF_WATCHDOG_PATH, WORKING_DIR])
         install.run(self)
 
 
 setup(
     name='cloud-pipeline',
-    version='0.5',
+    version='0.6',
     description='cloud pipeline package',
     long_description='The cloud-pipeline for \
         querying given benchmark of an OpenStack env',

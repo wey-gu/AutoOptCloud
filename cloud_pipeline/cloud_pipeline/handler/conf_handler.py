@@ -1,6 +1,7 @@
 from string import Template
 import os
 import subprocess
+import time
 import numpy as np
 from ..config import APPLY_CONF_TEMPLATE_PATH, ARG_KEYS
 from ..utils.logger import Logger
@@ -72,7 +73,7 @@ class ConfHandler():
         with open(template_path, 'r') as template_file:
             template_string = template_file.read()
         puppet_string = PuppetTemplate(template_string).substitute(**arg)
-        command_string = "/usr/bin/puppet apply -e '" + puppet_string + "'"
+        command_string = "puppet apply --modulepath=/etc/puppet/modules -e '" + puppet_string + "'"
         return command_string
 
     def _issue_command(self, command):

@@ -39,3 +39,6 @@ BENCHMARK_RUN_RETRY = 10
 
 # LNAV PATH, thanks to great tool https://lnav.org :-)
 LNAV_PATH = "resources/3pp/lnav-0.8.5-linux-64bit.zip"
+
+# script Path
+SCRIPT_PATH = "resources/scripts/"

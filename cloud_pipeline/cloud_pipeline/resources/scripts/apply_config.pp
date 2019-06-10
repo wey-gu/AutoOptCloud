@@ -21,3 +21,7 @@ nova_config{
 exec {"restart nova-scheduler service":
   command => "/usr/sbin/service nova-scheduler restart"
 }
+exec {"wait for nova-scheduler":
+  command => "sleep 30",
+  path => "/usr/bin:/bin",
+}

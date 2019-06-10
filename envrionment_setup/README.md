@@ -51,20 +51,62 @@ vim /var/lib/cloud_pipeline/env/lib/python2.7/site-packages/cloud_pipeline/confi
 ```bash
 screen -S jupyter
 source /var/lib/cloud_pipeline/env/bin/activate
+# or from docker
+# docker exec -it cloud-opt bash
 jupyter notebook --ip <public_ip> --port 8080 --allow-root
 
-^-ad
+^ad
 ```
 
-> start frontail
+> ~~start frontail~~
 
 ```bash
 docker run -d -it -v /var/lib/cloud_pipeline:/var/lib/cloud_pipeline -v /var/log:/log e4d2fa40e966 /var/lib/cloud_pipeline/log/*.log --host 127.0.0.1 --port 9001 --net=host --name frontail
 
 docker exec -it 565270cacde7 bash
 
-
 frontail --ui-highlight  --theme dark /var/lib/cloud_pipeline/log/*.log --host 127.0.0.1 --port 9001
+```
+
+> install cloud-pipeline and dashboard
+
+```bash
+source /var/lib/cloud_pipeline/env/bin/activate
+pip install /var/lib/cloud_pipeline/packages/cloud_pipeline.tar.gz
+pip install /var/lib/cloud_pipeline/packages/dashboard.tar.gz
+```
+
+> install and run conf_watchdog
+
+```bash
+dpkg -i /var/lib/cloud_pipeline/packages/inotify/*
+screen -S conf_watchdog
+/var/lib/cloud_pipeline/conf_watchdog.sh /etc/nova/nova.conf "service nova-scheduler restart"
+^ad
+```
+
+> run dashboard
+
+```bash
+screen -S dashboard-be
+source /var/lib/cloud_pipeline/env/bin/activate
+# docker exec -it cloud-opt_py2 dashb backend
+dashb backend
+^ad
+
+screen -S dashboard-watchdog
+source /var/lib/cloud_pipeline/env/bin/activate
+# docker exec -it cloud-opt_py2 dashb watchdog
+dashb watchdog
+^ad
+
+```
+
+> demo dashboard for existing result real quick
+
+```bash
+screen -r demo
+for iteration in {20..144}; do head -n $iteration data_demo.csv > data.csv && sleep 3; done
 ```
 
 
@@ -74,25 +116,24 @@ frontail --ui-highlight  --theme dark /var/lib/cloud_pipeline/log/*.log --host 1
 ```bash
 apt-get install -y --force-yes docker.io cgroup-bin
 
-docker load < opt-cloud_dockerImage.tar
-docker load < opt-cloud_dockerImage_py2.tar
+docker load < opt-cloud_opt-cloud*.tar
+
+docker tag 5e898bdd0894 opt-cloud/py2:0.6
 
 $ docker images
-REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
-<none>              <none>              8152b07f5c7f        16 minutes ago      1.101 GB
-<none>              <none>              836a0d092e24        18 hours ago        1.155 GB
+REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE
+opt-cloud/py2                     0.6                 5e898bdd0894        45 hours ago        1.09GB
 
-docker run -v /var/lib/cloud_pipeline:/var/lib/cloud_pipeline \
+docker run --privileged \
+  -v /var/lib/cloud_pipeline:/var/lib/cloud_pipeline \
+  -v /var/lib/cloud_pipeline:/cloud_pipeline \
   -v /etc/localtime:/etc/localtime \
   -v /path/to/certs/OS-ca.crt:/path/to/certs/OS-ca.crt \
   -v /root/openrc:/root/openrc \
-  --net=host -d -it --name cloud-opt 836a0d092e24
-
-docker run -v /var/lib/cloud_pipeline:/var/lib/cloud_pipeline \
-  -v /etc/localtime:/etc/localtime \
-  -v /path/to/certs/OS-ca.crt:/path/to/certs/OS-ca.crt \
-  -v /root/openrc:/root/openrc \
-  --net=host -d -it --name cloud-opt_py2 8152b07f5c7f
+  -v /etc/ssl/certs/CEE/ctrl-ca.crt:/etc/ssl/certs/CEE/ctrl-ca.crt \
+  -v /etc/nova:/etc/nova \
+  -v /etc/puppet:/etc/puppet \
+  --net=host -d -it --name cloud-opt_py2 opt-cloud/py2:0.6
 
 screen -S jupyter
 docker exec -it cloud-opt_py2 bash
@@ -104,21 +145,73 @@ jupyter notebook --ip 192.168.0.32 --port 8080 --allow-root
 
 
 
-### k8s
+### minikube
 
-> offline guide
+> Fetch offline minikube dependencies
 >
 > <https://github.com/kubernetes/minikube/blob/master/docs/offline.md>
->
-> build `minikube.iso`
->
-> <https://github.com/kubernetes/minikube/blob/master/docs/contributors/minikube_iso.md>
-
-download needed cahced files
 
 ```bash
-# docker images
+docker pull gcr.io/k8s-minikube/storage-provisioner:v1.8.1
+docker pull k8s.gcr.io/k8s-dns-sidecar-amd64:1.14.13
+docker pull k8s.gcr.io/k8s-dns-dnsmasq-nanny-amd64:1.14.13
+docker pull k8s.gcr.io/kubernetes-dashboard-amd64:v1.10.1
+docker pull k8s.gcr.io/kube-scheduler:v1.14.3
+docker pull k8s.gcr.io/coredns:1.3.1
+docker pull k8s.gcr.io/kube-controller-manager:v1.14.0
+docker pull k8s.gcr.io/kube-apiserver:v1.14.3
+docker pull k8s.gcr.io/pause:3.1
+docker pull k8s.gcr.io/etcd:3.3.10
+docker pull k8s.gcr.io/kube-addon-manager:v9.0
+docker pull k8s.gcr.io/k8s-dns-kube-dns-amd64:1.14.13
+docker pull k8s.gcr.io/kube-proxy:v1.14.3
+
+mkdir -p ~/.minikube/cache/images/k8s.gcr.io/
+mkdir -p ~/.minikube/cache/images/gcr.io/
+
+docker save k8s.gcr.io/kube-proxy                    > ~/.minikube/cache/images/k8s.gcr.io/kube-proxy_v1.14.3
+docker save k8s.gcr.io/kube-apiserver                > ~/.minikube/cache/images/k8s.gcr.io/kube-apiserver_v1.14.3
+docker save k8s.gcr.io/kube-controller-manager       > ~/.minikube/cache/images/k8s.gcr.io/kube-controller-manager_v1.14.3
+docker save k8s.gcr.io/kube-scheduler                > ~/.minikube/cache/images/k8s.gcr.io/kube-scheduler_v1.14.3
+docker save k8s.gcr.io/kube-addon-manager            > ~/.minikube/cache/images/k8s.gcr.io/kube-addon-manager_v9.0
+docker save k8s.gcr.io/coredns                       > ~/.minikube/cache/images/k8s.gcr.io/coredns_1.3.1
+docker save k8s.gcr.io/kubernetes-dashboard-amd64    > ~/.minikube/cache/images/k8s.gcr.io/kubernetes-dashboard-amd64_v1.10.1
+docker save k8s.gcr.io/etcd                          > ~/.minikube/cache/images/k8s.gcr.io/etcd_3.3.10
+docker save k8s.gcr.io/k8s-dns-sidecar-amd64         > ~/.minikube/cache/images/k8s.gcr.io/k8s-dns-sidecar-amd64_1.14.13
+docker save k8s.gcr.io/k8s-dns-kube-dns-amd64        > ~/.minikube/cache/images/k8s.gcr.io/k8s-dns-kube-dns-amd64_1.14.13
+docker save k8s.gcr.io/k8s-dns-dnsmasq-nanny-amd64   > ~/.minikube/cache/images/k8s.gcr.io/k8s-dns-dnsmasq-nanny-amd64_1.14.13
+docker save k8s.gcr.io/pause                         > ~/.minikube/cache/images/k8s.gcr.io/pause_3.1
+docker save gcr.io/k8s-minikube/storage-provisioner  > ~/.minikube/cache/images/gcr.io/k8s-minikube/storage-provisioner_v1.8.1
+```
+
+> ~~mock systemctl~~  use `--bootstrapper=localkube` instead ref:https://github.com/kubernetes/minikube/issues/2704
+
+```bash
+touch /bin/systemctl
+chomd + /bin/systemctl
+cat /bin/systemctl
+service $2 $1 || true
+```
+
+> install docker-ce
+>
+> download deb from here: https://download.docker.com/linux/ubuntu/dists/trusty/pool/stable/amd64/
+
+```bash
+apt-get remove docker docker-engine docker.io
+dpkg -i /var/lib/cloud_pipeline/packages/minikube/docker-ce/*
+```
 
 
+
+> install minikube #https://github.com/kubernetes/minikube/releases/tag/v0.27.0 as localkube was not removed
+
+```bash
+mkdir -p ~/.minikube/cache
+cd ~/.minikube/
+tar xzvf /var/lib/cloud_pipeline/packages/minikube/minikube_cache.tar.gz
+cp /var/lib/cloud_pipeline/packages/minikube/bin/minikube /bin/
+chmod +x /bin/minikube
+minikube --bootstrapper=localkube start --vm-driver=none
 ```
 

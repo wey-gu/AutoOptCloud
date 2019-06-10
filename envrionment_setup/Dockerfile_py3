@@ -1,4 +1,4 @@
-from ubuntu:latest
+FROM ubuntu:latest
 
 USER root
 
@@ -8,12 +8,19 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     python-tk git gfortran libopenblas-dev liblapack-dev liblapacke-dev \
-    python3-pip python3-dev python3-setuptools unzip \
+    python3-pip python3-dev python3-setuptools unzip wget && \
+    wget https://apt.puppetlabs.com/puppet6-release-bionic.deb && \
+    dpkg -i puppet6-release-bionic.deb && apt-get update && \
+    apt-get install -y --no-install-recommends \
+    puppet-agent \
+    && rm puppet6-release-bionic.deb \
     && rm -rf /var/lib/apt/lists/*
 RUN python3 -m pip install --no-cache-dir --upgrade pip && \
-    python3 -m pip install --no-cache-dir python-heatclient python-keystoneclient ansible==2.7.8 numpy polling scikit-learn matplotlib jupyter \
+    python3 -m pip install --no-cache-dir python-heatclient python-keystoneclient python-openstackclient ansible==2.7.8 numpy polling scikit-learn matplotlib jupyter argh python-dotenv python-engineio python-socketio PyYAML pathtools watchdog\
     flask flask_cors flask_socketio python-dotenv paramz scipy GPy && \
-    python3 -m pip install --no-cache-dir git+https://github.com/littlewey/gpbo@master && \
+    # python3 -m pip install --no-cache-dir git+https://github.com/littlewey/gpbo@master && \
     python3 -m pip install --no-cache-dir git+https://github.com/fmfn/BayesianOptimization@master && \
     python3 -m pip install --no-cache-dir git+https://github.com/SheffieldML/GPyOpt.git@master && \
     rm -fr /tmp/*
+
+ENV PATH="/opt/puppetlabs/bin:${PATH}"

@@ -6,11 +6,11 @@
 
 ## Cloud-pipeline
 
-Please check [here](https://gitlab.com/ml-opt-cloud/ML-opt-Cloud/tree/master/cloud_pipeline)
+Please check [here](https://github.com/wey-gu/AutoOptCloud/tree/master/cloud_pipeline)
 
 
 
 ## Benchmark
 
-Please check [here](https://gitlab.com/ml-opt-cloud/ML-opt-Cloud/blob/master/study/benchmark/benchmark_env.md)
+Please check [here](https://github.com/wey-gu/AutoOptCloud/tree/master/study/benchmark)
 

@@ -4,7 +4,7 @@ This project is a PoC/example to show automation of large-scale Cloud Infra opti
 
 Below is the arch digram:
 
-![arch_diagram](./branding/arch_diagram.png)
+![arch_diagram](images/arch_diagram.png)
 
 
 
@@ -27,7 +27,19 @@ Those things put as predefined ones while should be inputs of the toolchain itse
 
 
 
-Also, a dashboard(code: [frontend](https://github.com/wey-gu/AutoOptCloud/tree/master/visualization/dashboard-fe), [backend](https://github.com/wey-gu/AutoOptCloud/tree/master/dashboard)) to help visualization of the training process and the outcome of the tuning was created below is a screen record for it: https://vimeo.com/497995660.
+Also, a dashboard(code: [frontend](https://github.com/wey-gu/AutoOptCloud/tree/master/visualization/dashboard-fe), [backend](https://github.com/wey-gu/AutoOptCloud/tree/master/dashboard)) to help visualization of the training process and the outcome of the tuning was created below is a screen record for it: https://vimeo.com/497995660
 
-And, not just [calling them in python](https://github.com/wey-gu/AutoOptCloud/tree/master/cloud_pipeline#manually-test), a CLI for cloud-pipeline was also created to easily debug, operate the experiment in a handy way, here is a screen record for that: https://vimeo.com/497997340.
+![dashboard_frontend_demo](images/dashboard_frontend_demo.gif)
+
+And, not just [calling them in python](https://github.com/wey-gu/AutoOptCloud/tree/master/cloud_pipeline#manually-test), a CLI for cloud-pipeline was also created to easily debug, operate the experiment in a handy way, here is a screen record for that: https://vimeo.com/497997340
+
+![cloud_pipeline_CLI_demo](images/cloud_pipeline_CLI_demo.gif)
+
+#### Parameter to tune
+
+![tuning_parameter](images/tuning_parameter.png)
+
+#### Benchmark, PoC result
+
+![benchmark_result](images/benchmark_result.png)
 

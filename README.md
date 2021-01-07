@@ -21,9 +21,9 @@ With the circle connected by Cloud-pipeline, we could run optimization with Baye
 
 Those things put as predefined ones while should be inputs of the toolchain itself:
 
-- The given parameter to tune
+- The given [parameter to tune](https://github.com/wey-gu/AutoOptCloud#parameter-to-tune)
 - The background traffic
-- The optimization target for application workload & its Benchmark([here](https://github.com/wey-gu/AutoOptCloud/tree/master/study/benchmark))
+- The optimization target for [application workload & its Benchmark](https://github.com/wey-gu/AutoOptCloud#benchmark-poc-result)([desc here](https://github.com/wey-gu/AutoOptCloud/tree/master/study/benchmark))
 
 
 
